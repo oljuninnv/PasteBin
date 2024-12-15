@@ -1,0 +1,7 @@
+FROM nginx
+
+WORKDIR /www
+
+COPY ./ci-cd/build-configs/vhost1.conf /etc/nginx/conf.d/default.conf
+
+COPY --chown=82:82 . .
