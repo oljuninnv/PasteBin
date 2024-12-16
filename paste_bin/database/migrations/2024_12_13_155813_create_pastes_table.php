@@ -16,13 +16,13 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users');
             $table->string('title');
             $table->text('content');
-            $table->timestamps();
             $table->dateTime('expires_at')->nullable();
             $table->enum('visibility', ['public', 'unlisted', 'private']);
             $table->enum('expiration_time', ['10min', '1hour', '3hours', '1day', '1week', '1month', 'never']);
             $table->foreignId('language_id')->nullable()->constrained('languages');
             $table->foreignId('category_id')->nullable()->constrained('categories');
             $table->string('short_link')->unique();
+            $table->timestamps();
         });
     }
 
