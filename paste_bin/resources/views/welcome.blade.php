@@ -9,8 +9,9 @@
         @vite(['resources/js/app.js'])
     </head>
     <body class="antialiased">
-        <h1 class="text-3xl font-bold underline text-green-200">
+        @include('components/header')
+        {{-- <h1 class="font-bold underline  text-2xl text-[#2a59b1]">
             Hello world!
-          </h1>
+          </h1> --}}
     </body>
 </html>
