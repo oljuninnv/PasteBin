@@ -12,12 +12,10 @@ class AuthController extends Controller
     {        
         $values = $request->all();
 
-        // Проверка аутентификации
         if (Auth::attempt(['email' => $values['email'], 'password' => $values['password']])) {
             $user = Auth::user();
             $success['token'] = $user->createToken('User Token')->accessToken;
 
-            // Формируем ответ
             $success['data'] = [
                 'user' => $user,
             ];
