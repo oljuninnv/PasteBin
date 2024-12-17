@@ -2,9 +2,9 @@
 @extends('layout')
 
 @section('content')
-<div class='flex w-full m-auto justify-between flex-wrap'>
-    <div class="w-[70%]">
-        <h2>Login Page</h2>
+<div class='flex w-full m-auto justify-between flex-wrap gap-5'>
+    <div class="w-full sm:w-[70%]">
+        <h2 class="text-xl font-bold">Login Page</h2>
         <hr class="border-t border-solid border-gray-300">
         @include('../../components/authForm')
     </div>

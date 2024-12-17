@@ -21,6 +21,13 @@ Route::get('/auth', function () {
     return view('pages/authPage');
 });
 
+Route::get('/register', function () {
+    return view('pages/registerPage');
+});
+
+Route::get('/reset_password', function () {
+    return view('pages/restorePasswordPage');
+});
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();

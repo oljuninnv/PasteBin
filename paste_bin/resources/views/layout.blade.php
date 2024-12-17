@@ -11,7 +11,7 @@
     <body class="antialiased">
         @include('components/header')
 
-        <main class="m-auto mt-10 ml-[5%] mr-[5%] mb-5">
+        <main class="m-auto mt-10 ml-[10%] mr-[10%] mb-5">
             <div class="w-full m-auto ">
                 @yield('content')
             </div>           
