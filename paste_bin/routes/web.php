@@ -33,6 +33,14 @@ Route::get('/user', function () {
     return view('pages/userPage');
 });
 
+Route::get('/edit_profile', function () {
+    return view('pages/editProfilePage');
+});
+
+Route::get('/report', function () {
+    return view('pages/sendReportPage');
+});
+
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
