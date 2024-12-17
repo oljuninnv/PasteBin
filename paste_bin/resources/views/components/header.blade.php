@@ -10,22 +10,47 @@
             </form>
         </div>
         <div>
-            <nav>
-                <ul class="flex flex-wrap gap-[10px]">
-                    @if(Auth::check())
-                        <li>Welcome, {{ Auth::user()->name }}</li>
-                        <li>
-                            <form method="POST" style="display:inline;">
+            <nav class="flex items-center justify-between">
+                @if(Auth::check())
+                    <div class="relative">
+                        <button id="avatar-button" class="flex items-center gap-2 focus:outline-none">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="w-8 h-8 rounded-full">
+                            <span>{{ Auth::user()->name }}</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="dropdown-menu" class="absolute right-0 mt-2 w-48 bg-gray-500 border border-gray-500 rounded-md shadow-lg z-10 hidden">
+                            <a href="/pastebin" class="block px-4 py-2 hover:bg-gray-300">Мой Pastebin</a>
+                            <a href="/profile" class="block px-4 py-2 hover:bg-gray-300">Профиль</a>
+                            <form method="POST" action="" class="block px-4 py-2 hover:bg-gray-300">
                                 @csrf
-                                <button type="submit" class="text-white">Logout</button>
+                                <button type="submit" class="w-full text-left">Выйти</button>
                             </form>
-                        </li>
-                    @else
-                        <li><a href="/login" class="text-white">Login</a></li>
-                        <li><a href="/register" class="text-white">Register</a></li>
-                    @endif
-                </ul>
+                        </div>
+                    </div>
+                @else
+                    <ul class="flex flex-wrap gap-4">
+                        <li><a href="/login" class="text-white">Войти</a></li>
+                        <li><a href="/register" class="text-white">Регистрация</a></li>
+                    </ul>
+                @endif
             </nav>
         </div>
-    </div>
 </header>
+
+<script>
+    document.getElementById('avatar-button').addEventListener('click', function() {
+        const dropdown = document.getElementById('dropdown-menu');
+        dropdown.classList.toggle('hidden');
+    });
+
+    // Закрытие меню при клике вне его
+    window.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('dropdown-menu');
+        const avatarButton = document.getElementById('avatar-button');
+        if (!avatarButton.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+</script>
