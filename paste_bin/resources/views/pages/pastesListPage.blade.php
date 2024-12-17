@@ -4,7 +4,7 @@
 @section('content')
 <div class='flex w-full m-auto justify-between flex-wrap'>
     <div class="w-[70%]">
-        @include('../../components/pasteList')
+        @include('../../components/listPastes')
     </div>
     <div class="flex flex-col gap-5 w-[25%]">
         <div class="w-full">
