@@ -29,6 +29,10 @@ Route::get('/reset_password', function () {
     return view('pages/restorePasswordPage');
 });
 
+Route::get('/user', function () {
+    return view('pages/userPage');
+});
+
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
