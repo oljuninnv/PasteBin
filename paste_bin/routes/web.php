@@ -41,6 +41,14 @@ Route::get('/report', function () {
     return view('pages/sendReportPage');
 });
 
+Route::get('/paste', function () {
+    return view('pages/userPastePage');
+});
+
+Route::get('/paste_list', function () {
+    return view('pages/pastesListPage');
+});
+
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
