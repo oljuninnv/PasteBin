@@ -9,9 +9,12 @@
         @vite(['resources/js/app.js'])
     </head>
     <body class="antialiased">
-        @include('components/userPastes')
-        {{-- <h1 class="font-bold underline  text-2xl text-[#2a59b1]">
-            Hello world!
-          </h1> --}}
+        @include('components/header')
+
+        <main class="m-auto mt-10 ml-[5%] mr-[5%] mb-5">
+            <div class="w-full m-auto ">
+                @yield('content')
+            </div>           
+        </main>
     </body>
 </html>

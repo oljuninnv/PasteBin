@@ -1,4 +1,4 @@
-<div class="container mx-auto my-8 px-4 sm:px-6 lg:px-8">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
     <form action="#" method="POST" class="flex flex-col gap-6 w-full sm:w-3/4 lg:w-1/2">
         @csrf
         <h2 class="text-2xl font-bold">New Paste</h2>
