@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string(column: 'google_id')->nullable();
-            $table->string('github_id')->nullable();
+            $table->string(column: 'provider')->nullable();
+            $table->string('provider_id')->nullable();
+            $table->string('provider_token')->nullable();
         });
     }
 
@@ -23,8 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('google_id');
-            $table->dropColumn('github_id');
+            $table->string(column: 'provider')->nullable();
+            $table->string('provider_id')->nullable();
+            $table->string('provider_token')->nullable();
         });
     }
 };

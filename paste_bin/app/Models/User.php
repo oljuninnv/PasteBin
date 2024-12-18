@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Str;
 
 class User extends \TCG\Voyager\Models\User implements MustVerifyEmail
 {
@@ -25,6 +26,9 @@ class User extends \TCG\Voyager\Models\User implements MustVerifyEmail
         'website',
         'avatar',
         'email_verified',
+        'provider',
+        'provider_id',
+        'provider_token'
     ];
 
     /**
@@ -56,5 +60,17 @@ class User extends \TCG\Voyager\Models\User implements MustVerifyEmail
     public function reports()
     {
         return $this->hasMany(Report::class);
+    }
+
+    public static function generateUserName($username)
+    {
+        if ($username === null){
+            $username = Str :: lower(Str::random(8));
+        }
+        if (User::where('name', $username)->exists()){
+            $newUsername = $username.Str::lower(Str::random(3));
+            $username = self::generateUserName(($newUsername));
+        }
+        return $username;
     }
 }

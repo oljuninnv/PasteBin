@@ -21,8 +21,8 @@
                             </svg>
                         </button>
                         <div id="dropdown-menu" class="absolute right-0 mt-2 w-48 bg-gray-500 border border-gray-500 rounded-md shadow-lg z-10 hidden">
-                            <a href="/pastebin" class="block px-4 py-2 hover:bg-gray-300">Мой Pastebin</a>
-                            <a href="/profile" class="block px-4 py-2 hover:bg-gray-300">Профиль</a>
+                            <a href="{{ route('user') }}" class="block px-4 py-2 hover:bg-gray-300">Мой Pastebin</a>
+                            <a href="{{ route('edit_profile') }}" class="block px-4 py-2 hover:bg-gray-300">Профиль</a>
                             <form method="GET" action="{{ route('logout') }}" class="block px-4 py-2 hover:bg-gray-300">
                                 @csrf
                                 <button type="submit" class="w-full text-left">Выйти</button>
