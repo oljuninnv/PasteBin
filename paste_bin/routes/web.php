@@ -33,6 +33,10 @@ Route::get('/reset_password', function () {
     return view('pages/restorePasswordPage');
 });
 
+Route::get('/reset_password/confirm', function () {
+    return view('pages/restorePasswordConfirmPage');
+});
+
 Route::get('/user', function () {
     return view('pages/userPage');
 });
