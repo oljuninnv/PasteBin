@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\RegisterController;
 use App\Http\Controllers\Auth\ProviderController;
 use Laravel\Socialite\Facades\Socialite;
 /*
@@ -20,30 +21,24 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware('guest')->group(function () {
+
     // Страница авторизации пользователя
     Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('login', [AuthController::class, 'login'])->name('auth');
 
-    // Авторизация пользователя через github
+    // Авторизация пользователя через соц. сети
 
     Route::get('/auth/{provider}/redirect', [ProviderController::class,'redirect']);
     
     Route::get('/auth/{provider}/callback', [ProviderController::class,'callback']);
 
-    Route::get('/register', function () {
-        return view('pages/registerPage');
-    });
+    // Регистрация пользователя
+
+    Route::get('register', [RegisterController::class, 'showRegisterForm'])->name('register_form');
+    Route::post('register', [RegisterController::class, 'register'])->name('register');
 });
 
-Route::get('/auth/redirect', function () {
-    return Socialite::driver('github')->redirect();
-});
-
-Route::get('/auth/callback', function () {
-    $user = Socialite::driver('github')->user();
-
-    // $user->token
-});
+// Выход из аккаунта
 
 Route::middleware('auth')->get('logout', [AuthController::class, 'logout'])->name('logout');
 

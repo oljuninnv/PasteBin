@@ -47,7 +47,7 @@
 
     <div class="mt-4 text-center">
         <p>
-            <a href="#" class="text-blue-500 hover:underline">Зарегистрироваться</a> /
+            <a href="/register" class="text-blue-500 hover:underline">Зарегистрироваться</a> /
             <a href="#" class="text-blue-500 hover:underline">Восстановить пароль</a>
         </p>
     </div>
