@@ -10,11 +10,11 @@
         <span class="absolute left-1/2 transform -translate-x-1/2 -top-4 text-lg bg-white px-2 text-gray-300">или</span>
     </div>
     
-    <form action='Post' class="mt-2 flex flex-col gap-2">
+    <form action="{{ route('auth') }}" method="POST" class="mt-2 flex flex-col gap-2">
         @csrf
         <div class="flex gap-2 flex-col">
             <label for="username">Логин:</label>
-            <input type="text" name="username" id="username" class="border border-gray-300 rounded-md p-2" required>
+            <input type="text" name="name" id="username" class="border border-gray-300 rounded-md p-2" required>
         </div>
         
         <div class="flex gap-2 flex-col">
