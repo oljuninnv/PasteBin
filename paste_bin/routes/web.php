@@ -15,11 +15,13 @@ use App\Http\Controllers\Web\AuthController;
 
 Route::get('/', function () {
     return view('pages/mainPage');
-});
+})->name('home');
 
 // Страница авторизации пользователя
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('auth');
+
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/register', function () {
     return view('pages/registerPage');

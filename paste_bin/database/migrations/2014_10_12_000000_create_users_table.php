@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('location')->nullable();
             $table->string('website')->nullable();
-            $table->boolean('email_verified')->default(false);
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

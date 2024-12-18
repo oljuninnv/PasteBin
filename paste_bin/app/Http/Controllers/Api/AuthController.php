@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {        
         $values = $request->all();
 
@@ -24,6 +29,33 @@ class AuthController extends Controller
         }
 
         return $this->failureResponse(['error' => 'Ошибка в заполнении данных.']);
+    }
+
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        // Валидация данных запроса
+        $values = $request->all();
+            // Создание нового пользователя
+            $user = new User;
+            $user->name = $values['name'];
+            $user->email = $values['email'];
+            $user->password = Hash::make($values['password']);
+            $user->save();
+
+            // Генерация токена доступа
+            $token = $user->createToken('Access Token')->accessToken;
+            $data = [
+                'user' => $user,
+                'access_token' => $token,
+            ];
+
+            return response()->json($data, 200);
+    } 
+
+    public function logout(Request $request){
+        $user = Auth::user();
+        $user->tokens()->delete();
+        return response()->json(['message' => 'User logged out successfully.'], 200);
     }
 
 }

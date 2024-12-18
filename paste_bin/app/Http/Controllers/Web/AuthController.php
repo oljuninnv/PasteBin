@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {
@@ -12,8 +14,7 @@ class AuthController extends Controller
     {
         Auth::logout();
 
-        // Возвращаемся на предыдущую страницу
-        return redirect()->back();
+        return redirect()->route('home');
     }
 
     public function showLoginForm()
@@ -21,18 +22,12 @@ class AuthController extends Controller
         return view('pages/authPage'); 
     }
 
-    public function login(Request $request){
-        $messages = [
-            'name.required' => 'Поле email обязательно для заполнения.',
-            'password.required' => 'Поле пароля обязательно для заполнения.',
-        ];
+    public function login(LoginRequest $request){
 
-        $request->validate([
-            'name' => 'required',
-            'password' => 'required',
-        ], $messages);
+        $values = $request->all();
 
-        if (Auth::attempt($request->only('name', 'password'))) {
+
+        if (Auth::attempt(['name' => $values['name'], 'password' => $values['password']])) {
             $user = Auth::user();
 
             if ($user->banned == 1) {
