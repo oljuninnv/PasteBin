@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\RegisterController;
 use App\Http\Controllers\Auth\ProviderController;
-use Laravel\Socialite\Facades\Socialite;
+use App\Http\Controllers\Web\RestorePasswordController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,13 +43,11 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->get('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/reset_password', function () {
-    return view('pages/restorePasswordPage');
-});
+Route::get('reset_password', [RestorePasswordController::class, 'showResetPasswordrForm'])->name('resetPassword_form');
+Route::post('reset_password', [RestorePasswordController::class, 'reset_password'])->name('reset_password');
 
-Route::get('/reset_password/confirm', function () {
-    return view('pages/restorePasswordConfirmPage');
-});
+Route::get('reset_password/confirm', [RestorePasswordController::class, 'showResetPasswordConfirmForm'])->name('resetPasswordConfirm_form');
+Route::post('reset_password/confirm', [RestorePasswordController::class, 'resetPassword'])->name('reset_password_confirm');
 
 Route::get('/user', function () {
     return view('pages/userPage');

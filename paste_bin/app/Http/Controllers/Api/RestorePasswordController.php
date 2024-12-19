@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RestoreConfirmRequest;
@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 
-class ConfirmEmailController extends Controller
+class RestorePasswordController extends Controller
 {
     public function forgetPassword(Request $request)
     {
@@ -22,14 +22,14 @@ class ConfirmEmailController extends Controller
 
             if ($user) {
                 $token = Str::random(40);
-                $url = config('app.frontend-url.restore-password') . '?' . http_build_query(['token' => $token]);
+                $url = url('reset_password') . '?' . http_build_query(['token' => $token]);
 
                 $data = new PasswordResetDTO(
                     $request->email,
                     $token,
                     $url,
-                    'Подтверждение почты',
-                    "Пожалуйста, нажмите ниже, чтобы сподтвердить вашу почту!"
+                    'Смена пароля',
+                    "Пожалуйста, нажмите ниже, чтобы сменить пароль"
                 );
 
                 Mail::send('orderMail', ['data' => $data], function ($message) use ($data) {
@@ -46,7 +46,7 @@ class ConfirmEmailController extends Controller
                     ]
                 );
 
-                return response()->json(['success' => true, 'msg' => 'Please check your mail to confirm your email!']);
+                return response()->json(['success' => true, 'msg' => 'Пожалуйста проверьте почту, чтобы сменить пароль!!!']);
             } else {
                 return response()->json(['success' => false, 'msg' => 'User not found!']);
             }
@@ -95,7 +95,7 @@ class ConfirmEmailController extends Controller
         PasswordReset::where('email', $user->email)->delete();
 
         $data = [
-            'msg' => 'Confirm email successfully!',
+            'msg' => 'Password changed successfully!',
             'success' => true,
         ];
 
