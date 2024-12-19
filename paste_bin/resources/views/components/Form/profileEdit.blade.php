@@ -38,6 +38,11 @@
     <label for="avatar">Аватар</label>
     <input type="file" id="avatar" name="avatar" class="p-2 border border-gray-300 rounded-md" accept="image/*">
 
+    @if (!$hasPassword)
+        <label for="password">У вас видимо нету пароля, придумайте его</label>
+        <input type="password" id="password" name="password" class="p-2 border border-gray-300 rounded-md" placeholder="Введите новый пароль">
+    @endif
+
     <button type="submit" class="bg-blue-500 text-white p-2 rounded-md">Обновить профиль</button>
 </form>
 </div>
