@@ -72,10 +72,13 @@ class EmailConfirmController extends Controller
             if (!$user) {
                 // Ищем запись в таблице email_confirm_token по токену
                 $emailConfirm = EmailConfirm::where('token', $token)->first();
-        
-        
+                
                 // Ищем пользователя по email из записи
                 $user = User::where('email', $emailConfirm->email)->first();
+
+                if (!$user) {
+                    return redirect()->route('login')->withErrors(['error' => 'Пользователь не найден.']);
+                }
         
                 // Автоматическая аутентификация пользователя
                 Auth::login($user);
