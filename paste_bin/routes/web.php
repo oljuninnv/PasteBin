@@ -74,6 +74,7 @@ Route::get('/paste_list', function () {
     return view('pages/pastesListPage');
 });
 
+
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });

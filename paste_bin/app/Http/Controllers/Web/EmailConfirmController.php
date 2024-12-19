@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\EmailConfirm;
-use App\Http\Requests\Web\RestoreConfirmRequest;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -65,33 +64,31 @@ class EmailConfirmController extends Controller
 
     public function emailConfirm(Request $request)
     {
-
-            $token = $request->get('token');
-            
-            $resetData = EmailConfirm::where('token', $token)->first();
-
-            
-            if (!$resetData) {
-                return redirect()->route('edit_profile')->withErrors(['error' => 'Неверный токен.']);
-            }
-
             // Проверка на наличие пользователя
-            $user = User::where('email', $resetData->email)->first();
+            $user = User::where('email', $request->email)->first();
 
+            $token = $request->query('token');
 
             if (!$user) {
-                return redirect()->route('edit_profile')->withErrors(['error' => 'Пользователь не найден.']);
+                // Ищем запись в таблице email_confirm_token по токену
+                $emailConfirm = EmailConfirm::where('token', $token)->first();
+        
+        
+                // Ищем пользователя по email из записи
+                $user = User::where('email', $emailConfirm->email)->first();
+        
+                // Автоматическая аутентификация пользователя
+                Auth::login($user);
             }
 
             // Изменение пароля
             $user->email_verified_at = Carbon::now();
             $user->save();
-
+            
             // Удаление записи о сбросе пароля
             EmailConfirm::where('email', $user->email)->delete();
 
             // Успешное сообщение
-            return redirect()->route('edit_profile')->with('success', 'Почта успешно подтверждена!');
-        
+            return redirect()->route('edit_profile')->with('success', 'Почта успешно подтверждена!');       
     }
 }

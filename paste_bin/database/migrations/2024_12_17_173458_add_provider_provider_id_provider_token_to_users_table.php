@@ -19,7 +19,6 @@ return new class extends Migration {
             }
             if (!Schema::hasColumn('users', 'provider_token')) {
                 $table->string('provider_token')->nullable();
-
             }
         });
     }
