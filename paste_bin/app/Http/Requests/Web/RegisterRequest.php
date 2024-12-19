@@ -1,45 +1,27 @@
 <?php
 
-namespace App\Http\Requests;
-use Illuminate\Foundation\Http\FormRequest;
+namespace App\Http\Requests\Web;
+
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
 {
-    /**
-     * Получить правила валидации для запроса.
-     *
-     * @return array
-     */
+    public function authorize()
+    {
+        return true; // Разрешаем всем пользователям использовать этот запрос
+    }
+
     public function rules()
     {
         return [
             'name' => 'required|string|max:255|min:3',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:8',
         ];
     }
 
-    /**
-     * Обработка неудачной валидации.
-     *
-     * @param \Illuminate\Contracts\Validation\Validator $validator
-     * @return void
-     */
-    protected function failedValidation(Validator $validator)
-    {
-        throw new ValidationException($validator, response()->json([
-            'error' => 'Ошибка в заполнении данных.',
-            'messages' => $validator->errors(),
-        ]));
-    }
-
-    /**
-     * Сообщения об ошибках валидации.
-     *
-     * @return array
-     */
     public function messages()
     {
         return [
@@ -54,13 +36,8 @@ class RegisterRequest extends FormRequest
         ];
     }
 
-    /**
-     * Разрешить запрос.
-     *
-     * @return bool
-     */
-    public function authorize()
+    protected function failedValidation(Validator $validator)
     {
-        return true;
+        throw new ValidationException($validator);
     }
 }

@@ -31,14 +31,19 @@
     <form action="{{ route('auth') }}" method="POST" class="mt-2 flex flex-col gap-2">
         @csrf
         <div class="flex gap-2 flex-col">
-            <label for="username">Логин:</label>
-            <input type="text" name="name" id="username" class="border border-gray-300 rounded-md p-2" required>
+            <label for="name">Логин:</label>
+            <input type="text" name="name" id="name" class="border border-gray-300 rounded-md p-2" required>
+            @error('name')
+                <div class="text-red-500">{{ $message }}</div>
+            @enderror
         </div>
 
         <div class="flex gap-2 flex-col">
             <label for="password">Пароль:</label>
-            <input type="password" name="password" id="password" class="border border-gray-300 rounded-md p-2"
-                required>
+            <input type="password" name="password" id="password" class="border border-gray-300 rounded-md p-2" required>
+            @error('password')
+                <div class="text-red-500">{{ $message }}</div>
+            @enderror
         </div>
 
         <button type="submit"
@@ -48,7 +53,7 @@
     <div class="mt-4 text-center">
         <p>
             <a href="/register" class="text-blue-500 hover:underline">Зарегистрироваться</a> /
-            <a href="#" class="text-blue-500 hover:underline">Восстановить пароль</a>
+            <a href="/reset_password" class="text-blue-500 hover:underline">Восстановить пароль</a>
         </p>
     </div>
 </div>
