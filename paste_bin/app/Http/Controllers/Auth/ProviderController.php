@@ -25,9 +25,8 @@ class ProviderController extends Controller
             // Если пользователь не найден, создаем нового
             if (!$user) {
                 $user = User::create([
-                    'name' => $socialUser->getName(),
+                    'name' => User::generateUserName($socialUser->getNickname()),
                     'email' => $socialUser->getEmail(),
-                    'username' => User::generateUserName($socialUser->getNickname()),
                     'provider' => $provider,
                     'provider_id' => $socialUser->getId(),
                     'provider_token' => $socialUser->token,

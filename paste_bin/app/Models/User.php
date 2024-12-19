@@ -25,7 +25,7 @@ class User extends \TCG\Voyager\Models\User implements MustVerifyEmail
         'location',
         'website',
         'avatar',
-        'email_verified',
+        'email_verified_at',
         'provider',
         'provider_id',
         'provider_token'

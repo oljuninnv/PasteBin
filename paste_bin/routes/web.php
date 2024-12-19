@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\RegisterController;
 use App\Http\Controllers\Auth\ProviderController;
 use App\Http\Controllers\Web\RestorePasswordController;
+use App\Http\Controllers\Web\EditUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,9 +54,8 @@ Route::get('/user', function () {
     return view('pages/userPage');
 })->name('user');
 
-Route::get('/edit_profile', function () {
-    return view('pages/editProfilePage');
-})->name('edit_profile');
+Route::get('edit_profile', [EditUserController::class, 'showEditForm'])->name('showEditForm');
+Route::post('edit_profile', [EditUserController::class, 'edit_profile'])->name('edit_profile');
 
 Route::get('/report', function () {
     return view('pages/sendReportPage');
