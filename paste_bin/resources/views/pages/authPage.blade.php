@@ -6,7 +6,7 @@
     <div class="w-full sm:w-[70%]">
         <h2 class="text-xl font-bold">Login Page</h2>
         <hr class="border-t border-solid border-gray-300">
-        @include('../../components/authForm')
+        @include('../../components/Form/authForm')
     </div>
     <div class="w-[25%]">
         <div class="w-full">
