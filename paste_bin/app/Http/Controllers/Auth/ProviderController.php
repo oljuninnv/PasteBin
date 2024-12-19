@@ -16,8 +16,9 @@ class ProviderController extends Controller
 
     public function callback($provider)
     {
-        try {
+
             $socialUser = Socialite::driver($provider)->user();
+
 
             // Проверка, существует ли пользователь с таким же email
             $user = User::where('email', $socialUser->getEmail())->first();
@@ -62,9 +63,5 @@ class ProviderController extends Controller
             // Авторизуем пользователя
             Auth::login($user);
             return redirect('/');
-
-        } catch (\Exception $e) {
-            return redirect('/login')->withErrors(['error' => 'Something went wrong. Please try again.']);
-        }
     }
 }

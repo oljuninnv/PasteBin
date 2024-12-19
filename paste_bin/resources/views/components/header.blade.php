@@ -1,6 +1,6 @@
 <header class="bg-[#023859] text-white">
     <div class="max-w-[1340px] mx-auto flex flex-wrap items-center justify-between p-4">
-        <span class="text-[45px]">PASTEBIN</span>
+        <a href="{{route('home')}}"><span class="text-[45px]">PASTEBIN</span></a>
         <div class="flex flex-wrap items-center gap-5">
             <span>API</span>
             <span class="bg-green-600 p-[3px] rounded-md">+ Paste</span>

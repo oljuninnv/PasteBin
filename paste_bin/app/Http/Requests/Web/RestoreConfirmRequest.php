@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Web;
 
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RestoreConfirmRequest extends FormRequest
@@ -36,5 +38,10 @@ class RestoreConfirmRequest extends FormRequest
     public function authorize()
     {
         return true; // Разрешаем все запросы
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new ValidationException($validator);
     }
 }

@@ -26,6 +26,10 @@ class RestorePasswordController extends Controller
             // Валидация входящих данных
             $request->validate([
                 'email' => 'required|email|exists:users,email',
+            ], [
+                'email.required' => 'Поле email обязательно для заполнения.',
+                'email.email' => 'Введите корректный адрес электронной почты.',
+                'email.exists' => 'Этот адрес электронной почты не зарегистрирован в системе.',
             ]);
 
             $user = User::where('email', $request->email)->first();

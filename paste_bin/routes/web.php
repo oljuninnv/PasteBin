@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\RegisterController;
 use App\Http\Controllers\Auth\ProviderController;
 use App\Http\Controllers\Web\RestorePasswordController;
 use App\Http\Controllers\Web\EditUserController;
+use App\Http\Controllers\Web\EmailConfirmController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,13 +32,14 @@ Route::middleware('guest')->group(function () {
     // Авторизация пользователя через соц. сети
 
     Route::get('/auth/{provider}/redirect', [ProviderController::class,'redirect']);
-    
+        
     Route::get('/auth/{provider}/callback', [ProviderController::class,'callback']);
 
     // Регистрация пользователя
 
     Route::get('register', [RegisterController::class, 'showRegisterForm'])->name('register_form');
     Route::post('register', [RegisterController::class, 'register'])->name('register');
+
 });
 
 // Выход из аккаунта
@@ -50,12 +52,15 @@ Route::post('reset_password', [RestorePasswordController::class, 'reset_password
 Route::get('reset_password/confirm', [RestorePasswordController::class, 'showResetPasswordConfirmForm'])->name('resetPasswordConfirm_form');
 Route::post('reset_password/confirm', [RestorePasswordController::class, 'resetPassword'])->name('reset_password_confirm');
 
-Route::get('/user', function () {
-    return view('pages/userPage');
-})->name('user');
+Route::post('email', [EmailConfirmController::class, 'send_mail'])->name('send_mail');
+Route::get('email/confirm', [EmailConfirmController::class, 'emailConfirm'])->name('emailConfirm');
 
 Route::get('edit_profile', [EditUserController::class, 'showEditForm'])->name('showEditForm');
 Route::post('edit_profile', [EditUserController::class, 'edit_profile'])->name('edit_profile');
+
+Route::get('/user', function () {
+    return view('pages/userPage');
+})->name('user');
 
 Route::get('/report', function () {
     return view('pages/sendReportPage');

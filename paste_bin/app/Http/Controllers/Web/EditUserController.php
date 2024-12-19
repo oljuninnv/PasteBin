@@ -44,7 +44,7 @@ class EditUserController extends Controller
             // Обработка загрузки аватара
             if ($request->hasFile('avatar')) {
                 // Удаляем старый аватар, если он есть
-                if ($user->avatar) {
+                if ($user->avatar && $user->avatar != 'users/default.png') {
                     Storage::disk('public')->delete($user->avatar);
                 }
                 // Сохраняем новый аватар
