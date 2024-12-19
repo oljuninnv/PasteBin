@@ -10,6 +10,7 @@ use App\Http\Requests\Web\RestoreConfirmRequest;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
+use App\DTO\PasswordResetDTO;
 use Mail;
 
 class RestorePasswordController extends Controller
@@ -33,18 +34,18 @@ class RestorePasswordController extends Controller
                 $token = Str::random(40);
                 $url = url('reset_password/confirm') . '?' . http_build_query(['token' => $token]);
 
-                $data['url'] = $url;
-                $data['email'] = $request->email;
-                $data['token'] = $token;
-                $data['title'] = 'Смена пароля';
-                $data['body'] = "Пожалуйста, нажмите ниже, чтобы сменить пароль";
+                $data = new PasswordResetDTO(
+                    $request->email,
+                    $token,
+                    $url,
+                    'Смена пароля',
+                    "Пожалуйста, нажмите ниже, чтобы сменить пароль"
+                );
 
                 Mail::send('mail.orderMail', ['data' => $data], function ($message) use ($data) {
-                    $message->to($data['email'])->subject($data['title']);
+                    $message->to($data->email)->subject($data->title);
                 });
 
-
-                // dd($data);
                 // Попытка обновить или создать запись в PasswordReset
                 try {
                     $datetime = Carbon::now()->format('Y-m-d H:i:s');

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RestoreConfirmRequest;
+use App\Http\Requests\Api\RestoreConfirmRequest;
 use Illuminate\Http\Request;
 use Mail;
 use App\Models\User;
@@ -22,17 +22,17 @@ class RestorePasswordController extends Controller
 
             if ($user) {
                 $token = Str::random(40);
-                $url = url('reset_password') . '?' . http_build_query(['token' => $token]);
+                $url = url('reset_password/confirm'). '?' . http_build_query(['token' => $token]);
 
                 $data = new PasswordResetDTO(
                     $request->email,
                     $token,
                     $url,
                     'Смена пароля',
-                    "Пожалуйста, нажмите ниже, чтобы сменить пароль"
+                    "Пожалуйста, нажмите ниже, чтобы перейти на сайт и сменить пароль"
                 );
 
-                Mail::send('orderMail', ['data' => $data], function ($message) use ($data) {
+                Mail::send('mail.orderMail', ['data' => $data], function ($message) use ($data) {
                     $message->to($data->email)->subject($data->title);
                 });
 
@@ -52,22 +52,6 @@ class RestorePasswordController extends Controller
             }
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'msg' => $e->getMessage()]);
-        }
-    }
-
-    public function resetPasswordLoad(Request $request)
-    {
-        $resetData = PasswordReset::where('token', $request->token)->get();
-        if (isset($request->token) && count($resetData) > 0) {
-            $user = User::where('email', $resetData[0]['email'])->get();
-
-            if ($user) {
-                return response()->json(['msg' => 'User found', 'success' => true], 200);
-            } else {
-                return response()->json(['msg' => 'User not found', 'success' => false], 404);
-            }
-        } else {
-            return response()->json(['msg' => 'Invalid token', 'success' => false], 404);
         }
     }
 
