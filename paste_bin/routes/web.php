@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Web\PasteController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\RegisterController;
 use App\Http\Controllers\Auth\ProviderController;
@@ -19,9 +20,12 @@ use App\Http\Controllers\Web\EmailConfirmController;
 |
 */
 
-Route::get('/', function () {
-    return view('pages/mainPage');
-})->name('home');
+Route::get('/',[PasteController::class,'index']) -> name('home');
+Route::post('/', [PasteController::class, 'store'])->name('store');
+
+// Route::get('/', function () {
+//     return view('pages/mainPage');
+// })->name('home');
 
 Route::middleware('guest')->group(function () {
 
@@ -74,6 +78,9 @@ Route::get('/paste_list', function () {
     return view('pages/pastesListPage');
 });
 
+Route::get('/api', function () {
+    return view('api');
+})->name('api');
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();

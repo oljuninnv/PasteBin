@@ -19,11 +19,10 @@ class StorePasteRequest extends FormRequest
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'expires_at' => 'nullable|date',
-            'visibility' => 'required|in:public,unlisted,private',
-            'expiration_time' => 'required|in:10min,1hour,3hours,1day,1week,1month,never',
+            'visibility' => 'required|exists:visibilities,id',
+            'expiration_time' => 'required|exists:expiration_times,id',
             'language_id' => 'nullable|exists:languages,id',
             'category_id' => 'nullable|exists:categories,id',
-            'short_link' => 'required|string|unique:pastes,short_link|max:255',
         ];
     }
 
@@ -37,15 +36,11 @@ class StorePasteRequest extends FormRequest
             'content.string' => 'Содержимое пасты должно быть строкой.',
             'expires_at.date' => 'Некорректная дата для времени существования.',
             'visibility.required' => 'Выберите видимость пасты.',
-            'visibility.in' => 'Некорректная видимость. Доступные значения: public, unlisted, private.',
+            'visibility.exists' => 'Выбранный уровень доступа не существует',
             'expiration_time.required' => 'Выберите время существования пасты.',
-            'expiration_time.in' => 'Некорректное время существования. Доступные значения: 10min, 1hour, 3hours, 1day, 1week, 1month, never.',
+            'expiration_time.exists' => 'Выбранное время существования пасты не существует',
             'language_id.exists' => 'Выбранный язык не существует.',
             'category_id.exists' => 'Выбранная категория не существует.',
-            'short_link.required' => 'Короткая ссылка обязательна для заполнения.',
-            'short_link.string' => 'Короткая ссылка должна быть строкой.',
-            'short_link.unique' => 'Эта короткая ссылка уже используется.',
-            'short_link.max' => 'Короткая ссылка не должна превышать 255 символов.',
         ];
     }
 

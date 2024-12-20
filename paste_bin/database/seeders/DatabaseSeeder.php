@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
         // UsersTableSeeder::class,
         // CategoriesTableSeeder::class,
         // LanguagesTableSeeder::class,
+        // AddVisibilityValue::class,
+        // AddExpirationTimesValue::class,
         // PastesTableSeeder::class, 
         // MetadataTableSeeder::class,
         // UpdateExpiresAtSeeder::class,

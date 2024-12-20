@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\RestorePasswordController;
 use App\Http\Controllers\Api\EmailConfirmController;
+use App\Http\Controllers\Api\PasteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,10 +30,12 @@ Route::middleware('guest')->group(function () {
 
     //Востановление пароля
     Route::post('/restore', [RestorePasswordController::class, 'forgetPassword']);
-    Route::post('/restore/confirm', [RestorePasswordController::class, 'resetPassword']);
+    // Route::post('/restore/confirm', [RestorePasswordController::class, 'resetPassword']);
 
 });
 
 Route::post('confirm_email', [EmailConfirmController::class, 'send_mail'])
     ->middleware('auth:api')
     ->name('send_mail');
+
+Route::post('/create_paste', [PasteController::class, 'store']);

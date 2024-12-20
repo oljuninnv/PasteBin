@@ -2,7 +2,7 @@
     <div class="max-w-[1340px] mx-auto flex flex-wrap items-center justify-between p-4">
         <a href="{{route('home')}}"><span class="text-[45px]">PASTEBIN</span></a>
         <div class="flex flex-wrap items-center gap-5">
-            <span>API</span>
+            <a href="{{route('api')}}"><span>API</span></a>
             <span class="bg-green-600 p-[3px] rounded-md">+ Paste</span>
             <form method="get" class="flex gap-[5px]">
                 <input type="text" name="search" class="text-black p-2 rounded-md" placeholder="Введите название..." />

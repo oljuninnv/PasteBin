@@ -12,13 +12,14 @@ class UpdateExpiresAtSeeder extends Seeder
     {
         // Получаем все paste из таблицы pastes
         $pastes = DB::table('pastes')->get();
+        $expiration_times = DB::table('expiration_times')->get();
 
         foreach ($pastes as $paste) {
-            $expirationTime = $paste->expiration_time;
+            $expirationTime = $expiration_times->firstWhere('id', $paste->expiration_time_id);
             $expiresAt = null;
 
             // Устанавливаем expires_at в зависимости от expiration_time
-            switch ($expirationTime) {
+            switch ($expirationTime->name) {
                 case '10min':
                     $expiresAt = Carbon::now()->addMinutes(10);
                     break;

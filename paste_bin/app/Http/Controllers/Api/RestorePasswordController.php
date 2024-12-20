@@ -55,34 +55,34 @@ class RestorePasswordController extends Controller
         }
     }
 
-    public function resetPassword(RestoreConfirmRequest $request)
-    {
-        // Проверка на наличие токена
-        $resetData = PasswordReset::where('token', $request->get('token'))->first();
+    // public function resetPassword(RestoreConfirmRequest $request)
+    // {
+    //     // Проверка на наличие токена
+    //     $resetData = PasswordReset::where('token', $request->get('token'))->first();
 
-        if (!$resetData) {
-            return response()->json(['msg' => 'Invalid token', 'success' => false], 404);
-        }
+    //     if (!$resetData) {
+    //         return response()->json(['msg' => 'Invalid token', 'success' => false], 404);
+    //     }
 
-        // Проверка на наличие пользователя
-        $user = User::where('email', $resetData->email)->first();
+    //     // Проверка на наличие пользователя
+    //     $user = User::where('email', $resetData->email)->first();
 
-        if (!$user) {
-            return response()->json(['msg' => 'User not found', 'success' => false], 404);
-        }
+    //     if (!$user) {
+    //         return response()->json(['msg' => 'User not found', 'success' => false], 404);
+    //     }
 
-        // Изменение пароля
-        $user->password = Hash::make($request->get('password'));
-        $user->save();
+    //     // Изменение пароля
+    //     $user->password = Hash::make($request->get('password'));
+    //     $user->save();
 
-        // Удаление записи о сбросе пароля
-        PasswordReset::where('email', $user->email)->delete();
+    //     // Удаление записи о сбросе пароля
+    //     PasswordReset::where('email', $user->email)->delete();
 
-        $data = [
-            'msg' => 'Password changed successfully!',
-            'success' => true,
-        ];
+    //     $data = [
+    //         'msg' => 'Password changed successfully!',
+    //         'success' => true,
+    //     ];
 
-        return $this->successResponse($data);
-    }
+    //     return $this->successResponse($data);
+    // }
 }
