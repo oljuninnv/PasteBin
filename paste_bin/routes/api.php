@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\RestorePasswordController;
 use App\Http\Controllers\Api\EmailConfirmController;
 use App\Http\Controllers\Api\PasteController;
+use App\Http\Controllers\Api\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,3 +40,24 @@ Route::post('confirm_email', [EmailConfirmController::class, 'send_mail'])
     ->name('send_mail');
 
 Route::post('/create_paste', [PasteController::class, 'store']);
+
+
+// Группируем маршруты, требующие аутентификации
+Route::middleware(['auth'])->group(function () {
+    Route::delete('/delete_paste/{short_link}', [PasteController::class, 'destroy']);
+    Route::put('/update_paste/{short_link}', [PasteController::class, 'update']);
+
+    Route::post('comment_paste/{short_link}', [PasteController::class, 'comment']);
+    
+    Route::post('report_paste/{short_link}', [PasteController::class, 'report']);
+
+    Route::put('edit_profile/{user_id}', [ProfileController::class, 'edit']);
+});
+
+// Открытые маршруты
+Route::get('comments_paste/{short_link}', [PasteController::class, 'get_comments']);
+Route::get('/pastes', [PasteController::class, 'index']);
+Route::get('/paste/{short_link}', [PasteController::class, 'show']);
+Route::get('reports_paste/{short_link}', [PasteController::class, 'get_reports']);
+
+//
