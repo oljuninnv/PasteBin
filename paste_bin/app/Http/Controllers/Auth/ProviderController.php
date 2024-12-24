@@ -17,7 +17,7 @@ class ProviderController extends Controller
     public function callback($provider)
     {
 
-            $socialUser = Socialite::driver($provider)->user();
+            $socialUser = Socialite::driver($provider)->stateless()->user();
 
 
             // Проверка, существует ли пользователь с таким же email

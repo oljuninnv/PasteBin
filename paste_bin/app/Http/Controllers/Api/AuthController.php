@@ -28,7 +28,7 @@ class AuthController extends Controller
             return $this->successResponse($success);
         }
 
-        return $this->failureResponse(['error' => 'Ошибка в заполнении данных.']);
+        return response()->json(['message' => 'Ошибка в заполнении данных'], 409);
     }
 
     public function register(RegisterRequest $request): JsonResponse

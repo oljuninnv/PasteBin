@@ -8,12 +8,12 @@
     </div>
     <div class="flex flex-col gap-5 w-[25%]">
         <div class="w-full">
-            <a href='#'><h2>My Pastes</h2></a>
-            @include('../../components/userPastes')
+            <a href="{{ route('user')}}" class=" hover:underline">My Pastes</a>
+            {{-- @include('../../components/userPastes', ['pastes' => $userPastes]) --}}
         </div>
         <div>
-            <a href='#'><h2>Public Pastes</h2></a>
-            @include('../../components/userPastes')
+            <a href="{{ route('archive')}}" class=" hover:underline">Public Pastes</a>
+            {{-- @include('../../components/userPastes', ['pastes' => $publicPastes]) --}}
         </div>
     </div>
 </div>

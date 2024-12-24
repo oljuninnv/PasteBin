@@ -43,7 +43,6 @@ class PasteController extends Controller
             $short_link = Str::random(15);
         } while (Paste::where('short_link', $short_link)->exists());
         
-        // Присвоение уникального short_url
         $paste->short_link = $short_link;
 
         // Сохранение пасты

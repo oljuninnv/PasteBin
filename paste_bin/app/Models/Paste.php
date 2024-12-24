@@ -14,8 +14,8 @@ class Paste extends Model
         'title',
         'content',
         'expires_at',
-        'visibility',
-        'expiration_time',
+        'visibility_id',
+        'expiration_time_id',
         'language_id',
         'category_id',
         'short_link',
@@ -34,11 +34,6 @@ class Paste extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }
-
-    public function metadata()
-    {
-        return $this->hasOne(Metadata::class);
     }
 
     public function comments()

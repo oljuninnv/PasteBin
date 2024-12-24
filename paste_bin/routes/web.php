@@ -8,7 +8,9 @@ use App\Http\Controllers\Auth\ProviderController;
 use App\Http\Controllers\Web\RestorePasswordController;
 use App\Http\Controllers\Web\EditUserController;
 use App\Http\Controllers\Web\EmailConfirmController;
-
+use App\Http\Controllers\Web\ArchivePastesController;
+use App\Http\Controllers\Web\SendCommentController;
+use App\Http\Controllers\Web\ReportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -62,17 +64,16 @@ Route::get('email/confirm', [EmailConfirmController::class, 'emailConfirm'])->na
 Route::get('edit_profile', [EditUserController::class, 'showEditForm'])->name('showEditForm');
 Route::post('edit_profile', [EditUserController::class, 'edit_profile'])->name('edit_profile');
 
-Route::get('/user', function () {
-    return view('pages/userPage');
-})->name('user');
+Route::get('/user',[userPageController::class, 'show'])->name('user');
 
-Route::get('/report', function () {
-    return view('pages/sendReportPage');
-});
+Route::get('report/{short_link}',[ReportController::class, 'show'])->name('report');
+Route::post('report/{short_link}',[ReportController::class, 'send_report'])->name('send_report');
 
-Route::get('/paste', function () {
-    return view('pages/userPastePage');
-});
+// Страница со списком паст
+Route::get('/archive', [ArchivePastesController::class, 'index'])->name('archive');
+
+// Страница с пастой выбранного пользователя
+Route::get('paste/{short_link}', [ArchivePastesController::class, 'show'])->name('user_paste');
 
 Route::get('/paste_list', function () {
     return view('pages/pastesListPage');
@@ -82,6 +83,10 @@ Route::get('/api', function () {
     return view('api');
 })->name('api');
 
+Route::post('send_comment', [SendCommentController::class, 'send_comment'])->name('send_comment');
+
+
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
+

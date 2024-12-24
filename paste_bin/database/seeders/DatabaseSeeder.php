@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
         // AddVisibilityValue::class,
         // AddExpirationTimesValue::class,
         // PastesTableSeeder::class, 
-        // MetadataTableSeeder::class,
         // UpdateExpiresAtSeeder::class,
     ]);
 }

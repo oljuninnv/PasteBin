@@ -80,7 +80,7 @@ return [
 
     'database' => [
         'tables' => [
-            'hidden' => ['migrations', 'data_rows', 'data_types', 'menu_items', 'password_resets', 'permission_role', 'personal_access_tokens', 'settings','failed_jobs','translations','permissions','password_reset_tokens','oauth_refresh_tokens','oauth_personal_access_clients','oauth_clients','oauth_access_tokens','oauth_auth_codes','user_roles'],
+            'hidden' => ['migrations', 'data_rows', 'data_types', 'menu_items', 'password_resets', 'permission_role', 'personal_access_tokens', 'settings','failed_jobs','translations','permissions','password_reset_tokens','oauth_refresh_tokens','oauth_personal_access_clients','oauth_clients','oauth_access_tokens','oauth_auth_codes','user_roles','email_confirm_tokens'],
         ],
         'autoload_migrations' => true,
     ],
