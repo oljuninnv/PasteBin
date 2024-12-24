@@ -12,11 +12,12 @@ use App\Models\ExpirationTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Enums\VisibilityEnum;
+use Illuminate\Http\Request;
 
 class PasteController extends Controller
 {
 
-    public function index() // Заполнение формы по созданию пасты
+    public function index($short_link) // Заполнение формы по созданию пасты
     {
         $user = Auth::user();
         $visibilitys = Visibility::all();
@@ -91,11 +92,79 @@ class PasteController extends Controller
     }
 
     public function edit($short_link)
-    {
-        $paste = Paste::where('short_link', $short_link)->firstOrFail();
-        // Логика для редактирования пасты (например, отображение формы редактирования)
-        return view('pages/mainPage', compact('paste'));
+{
+    $user = Auth::user();
+    $visibilitys = Visibility::all();
+
+    // Получаем id для публичной видимости
+    $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC)->value('id');
+
+    $publicPastes = Paste::where('visibility_id', $publicVisibilityId)
+        ->where(function ($query) {
+            $query->where('expires_at', '>', now())
+                ->orWhereNull('expires_at');
+        })
+        ->where('user_id', '!=', Auth::id())
+        ->orWhereNull('user_id')
+        ->orderBy('created_at', 'desc')
+        ->take(10)
+        ->get();
+
+    // Получаем пасты пользователя
+    $userPastes = [];
+    if ($user) {
+        $userPastes = Paste::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
     }
+
+    $categories = Category::all();
+    $languages = Language::all();
+    $expiration_times = ExpirationTime::all();
+
+    // Находим пасту по short_link
+    $paste = Paste::where('short_link', $short_link)->firstOrFail();
+
+    // Передаем пасту и остальные данные в представление
+    return view('pages/editPage', compact('categories', 'languages', 'visibilitys', 'expiration_times', 'userPastes', 'publicPastes', 'paste'));
+}
+
+    public function update(Request $request, $short_link)
+{
+    // Валидация входных данных
+    $validatedData = $request->validate([
+        'content' => 'required|string',
+        'category_id' => 'required|exists:categories,id',
+        'expiration_time' => 'nullable|exists:expiration_times,id',
+        'tags' => 'nullable|string',
+        'language' => 'required|exists:languages,id',
+        'visibility_id' => 'required|exists:visibilities,id',
+        'title' => 'required|string|max:255',
+    ]);
+
+    // Поиск пасты по короткой ссылке
+    $paste = Paste::where('short_link', $short_link)->firstOrFail();
+
+    // Проверка прав пользователя (если требуется)
+    if (Auth::id() !== $paste->user_id) {
+        abort(403, 'У вас нет прав для редактирования этой пасты.');
+    }
+
+    // Обновление данных пасты
+    $paste->update([
+        'content' => $validatedData['content'],
+        'category_id' => $validatedData['category_id'],
+        'expiration_time' => $validatedData['expiration_time'] ? now()->addSeconds($validatedData['expiration_time']) : null,
+        'tags' => $validatedData['tags'],
+        'language_id' => $validatedData['language'],
+        'visibility_id' => $validatedData['visibility_id'],
+        'title' => $validatedData['title'],
+    ]);
+
+    // Перенаправление с сообщением об успехе
+    return redirect()->route('paste.edit', $short_link)->with('success', 'Паста успешно обновлена!');
+}
 
     // Метод для удаления пасты
     public function destroy($short_link)

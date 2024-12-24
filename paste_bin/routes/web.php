@@ -74,6 +74,7 @@ Route::post('report/{short_link}',[ReportController::class, 'send_report'])->nam
 Route::get('/archive', [ArchivePastesController::class, 'index'])->name('archive');
 
 Route::get('/paste/edit/{short_link}', [PasteController::class, 'edit'])->name('paste.edit');
+Route::post('/paste/update/{short_link}', [PasteController::class, 'update'])->name('paste.update');
 Route::post('/paste/delete/{short_link}', [PasteController::class, 'destroy'])->name('paste.delete');
 
 // Страница с пастой выбранного пользователя
