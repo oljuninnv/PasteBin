@@ -57,9 +57,9 @@ Route::middleware(['auth'])->group(function () {
 });
 // Открытые маршруты
 Route::get('comments_paste/{short_link}', [PasteController::class, 'get_comments']);
-Route::get('/pastes', [PasteController::class, 'index']); 
-Route::get('/user_pastes/{user_id}', [PasteController::class, 'user_index']);
 Route::get('/paste/{short_link}', [PasteController::class, 'show']);
 Route::get('reports_paste/{short_link}', [PasteController::class, 'get_reports']);
 
+Route::get('/pastes', [PasteController::class, 'index']); 
+Route::get('/user_pastes/{user_id}', [PasteController::class, 'user_index']);
 //

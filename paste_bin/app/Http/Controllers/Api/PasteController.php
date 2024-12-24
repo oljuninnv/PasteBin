@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Models\Comment;
 use App\Models\Report;
 use Illuminate\Http\Request;
+use App\Http\Resources\PasteResource;
 
 class PasteController extends Controller
 {
@@ -233,5 +234,35 @@ class PasteController extends Controller
         ];
 
         return response()->json(['paste' => $pasteData], 200);
+    }
+
+    public function index(Request $request)
+    {
+        // Получаем параметр поиска из запроса
+        $search = $request->input('search');
+
+        // Получаем все пасты с пагинацией, применяя поиск, если он указан
+        $pastes = Paste::when($search, function ($query) use ($search) {
+            return $query->where('title', 'like', "%{$search}%");
+        })->paginate($request->get('per_page')); // Укажите количество элементов на странице
+
+        // Возвращаем коллекцию паст с пагинацией
+        return PasteResource::collection($pastes);
+    }
+
+    public function user_index(Request $request, $user_id)
+    {
+        // Получаем параметр поиска из запроса
+        $search = $request->input('search');
+
+        // Получаем пасты пользователя с пагинацией, применяя поиск, если он указан
+        $pastes = Paste::where('user_id', $user_id)
+            ->when($search, function ($query) use ($search) {
+                return $query->where('title', 'like', "%{$search}%")
+                            ->orWhere('content', 'like', "%{$search}%");
+            })->paginate($request->get('per_page')); // Укажите количество элементов на странице
+
+        // Возвращаем коллекцию паст с пагинацией
+        return PasteResource::collection($pastes);
     }
 }
