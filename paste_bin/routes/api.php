@@ -52,11 +52,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('report_paste/{short_link}', [PasteController::class, 'report']);
 
     Route::put('edit_profile/{user_id}', [ProfileController::class, 'edit']);
-});
 
+    Route::get('profile/{user_id}', [ProfileController::class, 'show']);
+});
 // Открытые маршруты
 Route::get('comments_paste/{short_link}', [PasteController::class, 'get_comments']);
-Route::get('/pastes', [PasteController::class, 'index']);
+Route::get('/pastes', [PasteController::class, 'index']); 
+Route::get('/user_pastes/{user_id}', [PasteController::class, 'user_index']);
 Route::get('/paste/{short_link}', [PasteController::class, 'show']);
 Route::get('reports_paste/{short_link}', [PasteController::class, 'get_reports']);
 

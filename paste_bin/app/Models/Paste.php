@@ -45,4 +45,14 @@ class Paste extends Model
     {
         return $this->hasMany(Report::class);
     }
+
+    public function visibility()
+    {
+        return $this->belongsTo(Visibility::class);
+    }
+
+    public function expiration_time()
+    {
+        return $this->belongsTo(ExpirationTime::class);
+    }
 }
