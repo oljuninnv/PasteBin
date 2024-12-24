@@ -58,6 +58,11 @@
     </table>
 
     <div class="flex space-x-2 mt-5 ">
+        <div>
+            <span class="text-gray-600">
+                Страницы {{ $pastes->currentPage() }} из {{ $pastes->lastPage() }}
+            </span>
+        </div>
         <!-- Кнопка "Назад" -->
         @if ($pastes->onFirstPage())
             <button class="disabled bg-gray-300 text-gray-500 cursor-not-allowed px-4 py-2 rounded">Назад</button>

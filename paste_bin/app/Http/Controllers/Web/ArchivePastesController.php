@@ -95,7 +95,7 @@ class ArchivePastesController extends Controller
                     ->orWhereNull('expires_at');
             })
             ->where('user_id', '!=', Auth::id())
-             ->orWhereNull('user_id')
+            ->orWhereNull('user_id')
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
@@ -113,6 +113,6 @@ class ArchivePastesController extends Controller
         $isUserPaste = auth()->check() && auth()->id() === $paste->user_id;
 
         // Передаем пасту в представление
-        return view('pages/userPastePage', compact('paste', 'user', 'language', 'expirationTime', 'languages', 'comments', 'isUserPaste','publicPastes'));
-}
+        return view('pages/userPastePage', compact('paste', 'user', 'language', 'expirationTime', 'languages', 'comments', 'isUserPaste', 'publicPastes'));
+    }
 }
