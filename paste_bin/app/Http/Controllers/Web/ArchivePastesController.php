@@ -24,42 +24,41 @@ class ArchivePastesController extends Controller
 
         $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
 
-        $publicPastes = Paste::where('visibility_id', $publicVisibilityId)
-            ->where(function ($query) {
-                $query->where('expires_at', '>', now())
-                    ->orWhereNull('expires_at');
-            })
-            ->where('user_id', '!=', Auth::id())
-             ->orWhereNull('user_id')
-            ->orderBy('created_at', 'desc')
-            ->take(10)
-            ->get();
-        
-            $userPastes = Paste::where('visibility_id', $publicVisibilityId)
-            ->where(function ($query) {
-                $query->where('expires_at', '>', now())
-                    ->orWhereNull('expires_at');
-            })
-            ->where('user_id', '==', Auth::id())
-             ->orWhereNull('user_id')
-            ->orderBy('created_at', 'desc')
-            ->take(10)
-            ->get();
+        // Получаем текст поиска из запроса
+        $searchTerm = $request->input('search'); // Предполагаем, что поле ввода имеет имя 'search'
 
-        // Получаем последние 10 паст, соответствующих условиям
-        $pastesQuery = Paste::where('visibility_id', Visibility::where('name', VisibilityEnum::PUBLIC )->value('id'))
+        // Начинаем формировать запрос для публичных паст
+        $pastesQuery = Paste::where('visibility_id', $publicVisibilityId)
             ->where(function ($query) {
                 $query->where('expires_at', '>', now())
                     ->orWhereNull('expires_at');
             });
+
+        $userPastes = [];
+        if ($user) {
+            $userPastes = Paste::where('user_id', $user->id)
+                ->where('expires_at', '>', now())
+                ->orWhereNull('expires_at')
+                ->orderBy('created_at', 'desc')
+                ->take(10)
+                ->get();
+        }
 
         // Если пользователь аутентифицирован, добавляем условие по user_id
         if ($user) {
             $pastesQuery->where('user_id', '!=', $user->id); // Пасты не созданные пользователем
         }
 
+        // Добавляем условие поиска, если введен текст
+        if ($searchTerm) {
+            $pastesQuery->where(function ($query) use ($searchTerm) {
+                $query->where('title', 'like', '%' . $searchTerm . '%') // Поиск по заголовку
+                    ->orWhere('content', 'like', '%' . $searchTerm . '%'); // Поиск по содержимому
+            });
+        }
+
+        // Получаем последние 10 паст, соответствующих условиям
         $pastes = $pastesQuery->orderBy('created_at', 'desc') // Сортировка по дате создания
-            ->take(10) // Ограничение до 10 штук
             ->get();
 
         // Получаем все синтаксисы
@@ -67,11 +66,12 @@ class ArchivePastesController extends Controller
 
         // Проверяем, есть ли пасты
         if ($pastes->isEmpty()) {
-            return view('pages.pastesListPage', compact('pastes', 'languages','publicPastes','userPastes'))->with('message', 'Нет доступных паст.');
+            return view('pages.pastesListPage', compact('pastes', 'languages', 'userPastes'))->with('message', 'Нет доступных паст.');
         }
 
-        return view('pages.pastesListPage', compact('pastes', 'languages','publicPastes','userPastes'));
+        return view('pages.pastesListPage', compact('pastes', 'languages', 'userPastes'));
     }
+
 
     public function show($short_link)
     {
@@ -87,7 +87,7 @@ class ArchivePastesController extends Controller
                     ->orWhereNull('expires_at');
             })
             ->where('user_id', '!=', Auth::id())
-             ->orWhereNull('user_id')
+            ->orWhereNull('user_id')
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
@@ -105,7 +105,7 @@ class ArchivePastesController extends Controller
         $isUserPaste = auth()->check() && auth()->id() === $paste->user_id;
 
         // Передаем пасту в представление
-        return view('pages/userPastePage', compact('paste', 'user', 'language', 'expirationTime', 'languages', 'comments', 'isUserPaste','publicPastes'));
+        return view('pages/userPastePage', compact('paste', 'user', 'language', 'expirationTime', 'languages', 'comments', 'isUserPaste', 'publicPastes'));
     }
 
     public function personal_pastes(Request $request)

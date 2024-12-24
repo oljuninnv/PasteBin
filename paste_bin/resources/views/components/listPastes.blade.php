@@ -3,13 +3,15 @@
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Pastes</h1>
 
     <!-- Поисковая строка -->
-    <div class="flex flex-wrap items-center gap-4 mb-6">
-        <input type="text" placeholder="Search..."
-            class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">
-            Search
-        </button>
-    </div>
+    <form action="{{ route('archive') }}" method="GET">
+        <div class="flex flex-wrap items-center gap-4 mb-6">
+            <input type="text" name="search" placeholder="Search..."
+                class="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">
+                Search
+            </button>
+        </div>
+    </form>
 
     <!-- Список паст -->
     <h2 class="text-3xl font-semibold text-gray-800 mb-4">Публичные пасты</h2>

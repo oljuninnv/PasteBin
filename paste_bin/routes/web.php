@@ -79,10 +79,6 @@ Route::post('/paste/delete/{short_link}', [PasteController::class, 'destroy'])->
 // Страница с пастой выбранного пользователя
 Route::get('paste/{short_link}', [ArchivePastesController::class, 'show'])->name('user_paste');
 
-Route::get('/paste_list', function () {
-    return view('pages/pastesListPage');
-});
-
 Route::get('/api', function () {
     return view('api');
 })->name('api');
