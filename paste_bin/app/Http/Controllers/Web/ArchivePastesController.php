@@ -25,7 +25,15 @@ class ArchivePastesController extends Controller
         $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
 
         // Получаем текст поиска из запроса
-        $searchTerm = $request->input('search'); // Предполагаем, что поле ввода имеет имя 'search'
+        $searchTerm = $request->input('search');
+
+        // Получаем значение per_page из запроса или сессии
+        $perPage = $request->input('per_page', $request->session()->get('per_page', 5));
+
+        // Сохраняем значение per_page в сессии, если оно было передано
+        if ($request->has('per_page')) {
+            $request->session()->put('per_page', $perPage);
+        }
 
         // Начинаем формировать запрос для публичных паст
         $pastesQuery = Paste::where('visibility_id', $publicVisibilityId)
@@ -46,7 +54,7 @@ class ArchivePastesController extends Controller
 
         // Если пользователь аутентифицирован, добавляем условие по user_id
         if ($user) {
-            $pastesQuery->where('user_id', '!=', $user->id); // Пасты не созданные пользователем
+            $pastesQuery->where('user_id', '!=', $user->id)->orWhereNull('user_id'); // Пасты не созданные пользователем
         }
 
         // Добавляем условие поиска, если введен текст
@@ -59,7 +67,7 @@ class ArchivePastesController extends Controller
 
         // Получаем последние 10 паст, соответствующих условиям
         $pastes = $pastesQuery->orderBy('created_at', 'desc') // Сортировка по дате создания
-            ->get();
+            ->paginate($perPage);
 
         // Получаем все синтаксисы
         $languages = Language::all();
@@ -87,7 +95,7 @@ class ArchivePastesController extends Controller
                     ->orWhereNull('expires_at');
             })
             ->where('user_id', '!=', Auth::id())
-            ->orWhereNull('user_id')
+             ->orWhereNull('user_id')
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
@@ -105,45 +113,6 @@ class ArchivePastesController extends Controller
         $isUserPaste = auth()->check() && auth()->id() === $paste->user_id;
 
         // Передаем пасту в представление
-        return view('pages/userPastePage', compact('paste', 'user', 'language', 'expirationTime', 'languages', 'comments', 'isUserPaste', 'publicPastes'));
-    }
-
-    public function personal_pastes(Request $request)
-    {
-        $user = Auth::user();
-        if (!$user) {
-            return view('mypaste', ['pastes' => [], 'syntaxes' => [], 'categories' => [], 'rights' => []]);
-        }
-
-        // Получаем пасты, соответствующие условиям
-        $pastesQuery = Paste::where(function ($query) {
-            $query->where('access_time', '>', now()) // Текущая дата > access_time
-                ->orWhereNull('expires_at');
-        });
-
-        // Добавляем условие по user_id для аутентифицированного пользователя
-        $pastesQuery->where('user_id', '=', $user->id); // Пасты, созданные пользователем
-
-        // Пагинация: получаем пасты с пагинацией по 10 элементов
-        $pastes = $pastesQuery->orderBy('created_at', 'desc')->paginate(10);
-
-        $syntaxes = Language::all();
-        $categories = Category::all();
-        $rights = Visibility::all();
-
-        return view('mypaste', compact('pastes', 'syntaxes', 'categories', 'rights', 'user'));
-    }
-
-    public function personal_paste(request $request, $short_link)
-    {
-        // Ищем пасту по short_link
-        $paste = Paste::where('short_link', $short_link)->firstOrFail();
-
-        $username = User::find($paste->user_id, 'name');
-        $syntax = Language::find($paste->language_id, 'name');
-        $category = Category::find($paste->category_id_id, 'name');
-
-        // Передаем пасту в представление
-        return view('userPastePage', compact('paste', 'username', 'syntax', 'category'));
-    }
+        return view('pages/userPastePage', compact('paste', 'user', 'language', 'expirationTime', 'languages', 'comments', 'isUserPaste','publicPastes'));
+}
 }

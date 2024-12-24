@@ -10,6 +10,14 @@
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">
                 Search
             </button>
+            <!-- Выбор количества элементов на странице -->
+            <form method="GET" action="{{ request()->url() }}">
+                <select name="per_page" onchange="this.form.submit()" class="p-2 border border-gray-300 rounded-md">
+                    <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
+                </select>
+            </form>
         </div>
     </form>
 
@@ -48,4 +56,20 @@
             @endforelse
         </tbody>
     </table>
+
+    <div class="flex space-x-2 mt-5 ">
+        <!-- Кнопка "Назад" -->
+        @if ($pastes->onFirstPage())
+            <button class="disabled bg-gray-300 text-gray-500 cursor-not-allowed px-4 py-2 rounded">Назад</button>
+        @else
+            <a href="{{ $pastes->previousPageUrl() }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Назад</a>
+        @endif
+
+        <!-- Кнопка "Вперед" -->
+        @if ($pastes->hasMorePages())
+            <a href="{{ $pastes->nextPageUrl() }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Вперед</a>
+        @else
+            <button class="disabled bg-gray-300 text-gray-500 cursor-not-allowed px-4 py-2 rounded">Вперед</button>
+        @endif
+    </div>
 </div>
