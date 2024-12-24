@@ -12,12 +12,28 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use App\DTO\PasswordResetDTO;
 use Mail;
+use App\Models\Visibility;
+use App\Enums\VisibilityEnum;
+use App\Models\Paste;
 
 class RestorePasswordController extends Controller
 {
     public function showResetPasswordrForm()
     {
-        return view('pages/resetPasswordPage');
+        $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
+
+        $publicPastes = Paste::where('visibility_id', $publicVisibilityId)
+            ->where(function ($query) {
+                $query->where('expires_at', '>', now())
+                    ->orWhereNull('expires_at');
+            })
+            ->where('user_id', '!=', Auth::id())
+             ->orWhereNull('user_id')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        return view('pages/resetPasswordPage',compact('publicPastes'));
     }
 
     public function reset_password(Request $request)
@@ -78,7 +94,20 @@ class RestorePasswordController extends Controller
     {
         $token = $request->query('token');
 
-        return view('pages/restorePasswordConfirmPage', ['token' => $token]);
+        $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
+
+        $publicPastes = Paste::where('visibility_id', $publicVisibilityId)
+            ->where(function ($query) {
+                $query->where('expires_at', '>', now())
+                    ->orWhereNull('expires_at');
+            })
+            ->where('user_id', '!=', Auth::id())
+             ->orWhereNull('user_id')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        return view('pages/restorePasswordConfirmPage', compact('publicPastes', 'token'));
     }
 
     public function resetPassword(RestoreConfirmRequest $request)

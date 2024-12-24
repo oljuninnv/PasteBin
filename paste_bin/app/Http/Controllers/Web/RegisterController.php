@@ -8,6 +8,9 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\RegisterRequest;
 use Illuminate\Http\Request;
+use App\Models\Visibility;
+use App\Enums\VisibilityEnum;
+use App\Models\Paste;
 
 class RegisterController extends Controller
 {
@@ -34,6 +37,19 @@ class RegisterController extends Controller
 
     public function showRegisterForm()
     {
-        return view('pages/registerPage');
+        $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
+
+        $publicPastes = Paste::where('visibility_id', $publicVisibilityId)
+            ->where(function ($query) {
+                $query->where('expires_at', '>', now())
+                    ->orWhereNull('expires_at');
+            })
+            ->where('user_id', '!=', Auth::id())
+             ->orWhereNull('user_id')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        return view('pages/registerPage',compact('publicPastes'));
     }
 }

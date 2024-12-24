@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Paste;
+use App\Models\Visibility;
+use App\Enums\VisibilityEnum;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Web\EditProfileRequest;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +19,19 @@ class EditUserController extends Controller
         // Получаем текущего аутентифицированного пользователя
         $user = $request->user();
 
+        $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
+
+        $publicPastes = Paste::where('visibility_id', $publicVisibilityId)
+            ->where(function ($query) {
+                $query->where('expires_at', '>', now())
+                    ->orWhereNull('expires_at');
+            })
+            ->where('user_id', '!=', Auth::id())
+             ->orWhereNull('user_id')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
         // Проверяем, установлен ли пароль у пользователя
         $hasPassword = !is_null($user->password);
 
@@ -24,6 +40,7 @@ class EditUserController extends Controller
             'user' => $user,
             'showEmailVerificationButton' => is_null($user->email_verified_at),
             'hasPassword' => $hasPassword, // Передаем информацию о наличии пароля
+            'publicPastes' => $publicPastes,
         ]);
     }
 

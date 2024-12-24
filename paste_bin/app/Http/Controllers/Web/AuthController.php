@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests\Web\LoginRequest;
+use App\Models\Visibility;
+use App\Enums\VisibilityEnum;
+use App\Models\Paste;
 
 class AuthController extends Controller
 {
@@ -20,7 +23,20 @@ class AuthController extends Controller
 
     public function showLoginForm()
     {
-        return view('pages/authPage'); 
+        $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
+
+        $publicPastes = Paste::where('visibility_id', $publicVisibilityId)
+            ->where(function ($query) {
+                $query->where('expires_at', '>', now())
+                    ->orWhereNull('expires_at');
+            })
+            ->where('user_id', '!=', Auth::id())
+             ->orWhereNull('user_id')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        return view('pages/authPage',compact('publicPastes')); 
     }
 
     public function login(LoginRequest $request){

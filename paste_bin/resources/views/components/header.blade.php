@@ -3,11 +3,11 @@
         <a href="{{route('home')}}"><span class="text-[45px]">PASTEBIN</span></a>
         <div class="flex flex-wrap items-center gap-5">
             <a href="{{route('api')}}"><span>API</span></a>
-            <span class="bg-green-600 p-[3px] rounded-md">+ Paste</span>
-            <form method="get" class="flex gap-[5px]">
+            {{-- <span class="bg-green-600 p-[3px] rounded-md">+ Paste</span> --}}
+            {{-- <form method="get" class="flex gap-[5px]">
                 <input type="text" name="search" class="text-black p-2 rounded-md" placeholder="Введите название..." />
                 <button type="submit" class="bg-white p-[3px] rounded-md text-black">Поиск</button>
-            </form>
+            </form> --}}
         </div>
         <div>
             <nav class="flex items-center justify-between">

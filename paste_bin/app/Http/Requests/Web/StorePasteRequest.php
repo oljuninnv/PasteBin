@@ -18,8 +18,8 @@ class StorePasteRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'expires_at' => 'nullable|date',
-            'visibility' => 'required|exists:visibilities,id',
+            'expires_at' => 'nullable',
+            'visibility_id' => 'required|exists:visibilities,id',
             'expiration_time' => 'required|exists:expiration_times,id',
             'language_id' => 'nullable|exists:languages,id',
             'category_id' => 'nullable|exists:categories,id',
@@ -34,7 +34,6 @@ class StorePasteRequest extends FormRequest
             'title.max' => 'Название пасты не должно превышать 255 символов.',
             'content.required' => 'Содержимое пасты обязательно для заполнения.',
             'content.string' => 'Содержимое пасты должно быть строкой.',
-            'expires_at.date' => 'Некорректная дата для времени существования.',
             'visibility.required' => 'Выберите видимость пасты.',
             'visibility.exists' => 'Выбранный уровень доступа не существует',
             'expiration_time.required' => 'Выберите время существования пасты.',

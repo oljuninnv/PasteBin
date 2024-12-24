@@ -27,9 +27,11 @@
             <button id="copyButton" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition">
                 Copy
             </button>
+            @if (!$isUserPaste)
             <a  href="{{ route('report', $paste->short_link)}}" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-red-600 transition">
                 Report
             </a>
+            @endif
         </div>
         <div class="flex items-center gap-2">
             <label for="syntax" class="text-gray-700 font-medium">Синтаксис:</label>

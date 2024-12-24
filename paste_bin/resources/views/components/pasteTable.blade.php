@@ -5,29 +5,29 @@
                 <th class="border border-gray-300 p-2">Название пасты</th>
                 <th class="border border-gray-300 p-2">Дата создания</th>
                 <th class="border border-gray-300 p-2">Истекает</th>
-                <th class="border border-gray-300 p-2">Просмотры</th>
-                <th class="border border-gray-300 p-2">Комментарии</th>
                 <th class="border border-gray-300 p-2">Синтаксис</th>
                 <th class="border border-gray-300 p-2">Действия</th>
             </tr>
         </thead>
         <tbody>
-            {{-- @foreach($pastes as $paste) --}}
+            @foreach($userPastes as $paste)
                 <tr>
-                    <td class="border border-gray-300 p-2">Untitled</td>
-                    <td class="border border-gray-300 p-2">17.12.24</td>
-                    <td class="border border-gray-300 p-2">Never</td>
-                    <td class="border border-gray-300 p-2">8</td>
-                    <td class="border border-gray-300 p-2">0</td>
-                    <td class="border border-gray-300 p-2">None</td>
+                    <td class="border border-gray-300 p-2"><a href="{{ route('user_paste', $paste->short_link) }}"
+                        class="text-blue-600 hover:underline">{{ $paste->title }}</a></td>
+                    <td class="border border-gray-300 p-2">{{$paste->updated_at}}</td>
+                    <td class="border border-gray-300 p-2">{{$paste->expires_at}}</td>
+                    <td class="border border-gray-300 p-2">{{$paste->language->name}}</td>
                     <td class="border border-gray-300 p-2">
                         <div class="flex gap-2">
-                            <p class="text-blue-500 cursor-pointer hover:underline">Edit</p>
-                            <p class="text-red-500 cursor-pointer hover:underline">Delete</p>    
+                            <a href="{{ route('paste.edit', ['short_link' => $paste->short_link]) }}" class="text-blue-500 cursor-pointer hover:underline">Edit</a>
+                            <form action="{{ route('paste.delete', ['short_link' => $paste->short_link]) }}" method="POST" onsubmit="return confirm('Вы уверены, что хотите удалить эту пасту?');">
+                                @csrf
+                                <button type="submit" class="text-red-500 cursor-pointer hover:underline">Delete</button>
+                            </form>
                         </div>
                     </td>                          
                 </tr>
-            {{-- @endforeach --}}
+            @endforeach
         </tbody>
     </table>
     <div>

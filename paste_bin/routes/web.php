@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\EmailConfirmController;
 use App\Http\Controllers\Web\ArchivePastesController;
 use App\Http\Controllers\Web\SendCommentController;
 use App\Http\Controllers\Web\ReportController;
+use App\Http\Controllers\Web\userPageController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -71,6 +72,9 @@ Route::post('report/{short_link}',[ReportController::class, 'send_report'])->nam
 
 // Страница со списком паст
 Route::get('/archive', [ArchivePastesController::class, 'index'])->name('archive');
+
+Route::get('/paste/edit/{short_link}', [PasteController::class, 'edit'])->name('paste.edit');
+Route::post('/paste/delete/{short_link}', [PasteController::class, 'destroy'])->name('paste.delete');
 
 // Страница с пастой выбранного пользователя
 Route::get('paste/{short_link}', [ArchivePastesController::class, 'show'])->name('user_paste');

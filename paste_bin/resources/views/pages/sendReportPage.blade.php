@@ -12,7 +12,7 @@
     <div class="w-full sm:w-[25%]">
         <div class="w-full">
             <a href="{{ route('archive')}}" class=" hover:underline">Public Pastes</a>
-            {{-- @include('../../components/userPastes', ['pastes' => $publicPastes]) --}}
+            @include('../../components/userPastes', ['pastes' => $publicPastes])
         </div>
     </div>
 </div>

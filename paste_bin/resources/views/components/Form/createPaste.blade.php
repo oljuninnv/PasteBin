@@ -21,17 +21,17 @@
         <div class="flex flex-col gap-4">
             <label class="block">
                 <span class="text-gray-700 font-medium">Категория</span>
-                <select name="category" id="category" class="w-full border-2 border-gray-300 rounded-md p-2" required>
+                <select name="category_id" id="category" class="w-full border-2 border-gray-300 rounded-md p-2" required>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
-                @error('category')
+                @error('category_id')
                     <div class="text-red-500 text-sm">{{ $message }}</div>
                 @enderror
             </label>
 
-            <label class="block">
+            <label for="expiration_time" class="block">
                 <span class="text-gray-700 font-medium">Время существования пасты</span>
                 <select name="expiration_time" id="expiration_time" class="w-full border-2 border-gray-300 rounded-md p-2">
                     @foreach ($expiration_times as $expiration_time)
@@ -65,7 +65,7 @@
 
             <label class="block">
                 <span class="text-gray-700 font-medium">Права доступа</span>
-                <select name="visibility" id="visibilitys" class="w-full border-2 border-gray-300 rounded-md p-2" required>
+                <select name="visibility_id" id="visibilitys" class="w-full border-2 border-gray-300 rounded-md p-2" required>
                     @foreach ($visibilitys as $visibility)
                         <option value="{{ $visibility->id }}">{{ $visibility->name }}</option>
                     @endforeach

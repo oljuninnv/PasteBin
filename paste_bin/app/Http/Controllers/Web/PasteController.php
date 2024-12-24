@@ -22,18 +22,19 @@ class PasteController extends Controller
         $visibilitys = Visibility::all();
 
         // Получаем id для публичной видимости
-        $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC)->value('id');
+        $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
 
-        // Получаем публичные пасты
         $publicPastes = Paste::where('visibility_id', $publicVisibilityId)
             ->where(function ($query) {
-                $query->where('expires_at', '<', now())
+                $query->where('expires_at', '>', now())
                     ->orWhereNull('expires_at');
             })
+            ->where('user_id', '!=', Auth::id())
+             ->orWhereNull('user_id')
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
-            
+
         // Получаем пасты пользователя
         $userPastes = [];
         if ($user) {
@@ -55,13 +56,13 @@ class PasteController extends Controller
         // Создаем новую пасту
         $paste = new Paste();
         $paste->content = $request->input('content');
-        $paste->category_id = $request->input('category_id');
+        $paste->category_id = $request->input('category_id'); // Теперь это будет работать
 
-        // Обработка access_time
         $accessTime = $request->input('expiration_time');
         $duration = ExpirationTime::where('id', $accessTime)->value('value_in_minutes'); // the_duration хранится в минутах
         if ($duration > 0) {
             $paste->expires_at = now()->addMinutes($duration); // Добавляем минуты к текущему времени
+            $paste->expiration_time_id = $accessTime;
         } else {
             $paste->expires_at = null; // Если не нашли duration, оставляем пустым
         }
@@ -87,5 +88,21 @@ class PasteController extends Controller
 
         // Перенаправление после успешного сохранения
         return redirect()->route('home')->with('success', 'Паста успешно создана!');
+    }
+
+    public function edit($short_link)
+    {
+        $paste = Paste::where('short_link', $short_link)->firstOrFail();
+        // Логика для редактирования пасты (например, отображение формы редактирования)
+        return view('pages/mainPage', compact('paste'));
+    }
+
+    // Метод для удаления пасты
+    public function destroy($short_link)
+    {
+        $paste = Paste::where('short_link', $short_link)->firstOrFail();
+        $paste->delete();
+
+        return redirect()->route('user')->with('success', 'Паста успешно удалена.');
     }
 }

@@ -4,7 +4,7 @@
             <ul class="flex flex-col gap-4">
                 @if(isset($pastes) && $pastes->isNotEmpty())
                 @foreach ($pastes as $paste)
-                    <li class="border p-4 rounded-md shadow-md flex flex-col break-normal">
+                    <li class="border p-1 rounded-md shadow-md flex flex-col break-normal">
                         <a href="{{ route('user_paste', $paste->short_link) }}"
                             class="text-blue-600 hover:underline">{{ $paste->title }}</a>
                         <div class="flex gap-2">

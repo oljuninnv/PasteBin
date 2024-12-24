@@ -6,8 +6,8 @@
     <div class="w-full sm:w-[70%]">
         <div class="flex justify-between items-center flex-wrap">
             <div class="flex items-center gap-2">
-                <img src="" alt="Аватар пользователя" class="w-10 h-10 rounded-full">
-                <h2 class="font-bold text-lg">gg</h2>
+                <img src="{{ asset('storage/' . $user->avatar) }}" alt="Аватар пользователя" class="w-10 h-10 rounded-full">
+                <h2 class="font-bold text-lg">{{$user->name}}</h2>
             </div>
             <div class="w-full sm:w-auto mt-2 sm:mt-0">
                 <form method="get" class="flex gap-2">
@@ -26,7 +26,7 @@
     <div class="w-full sm:w-[25%]">
         <div class="w-full">
             <a href="{{ route('archive')}}" class=" hover:underline">Public Pastes</a>
-            {{-- @include('../../components/userPastes', ['pastes' => $publicPastes]) --}}
+            @include('../../components/userPastes', ['pastes' => $publicPastes])
         </div>
     </div>
 </div>
