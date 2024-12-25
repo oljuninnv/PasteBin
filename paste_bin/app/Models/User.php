@@ -8,16 +8,12 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends \TCG\Voyager\Models\User implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -31,46 +27,58 @@ class User extends \TCG\Voyager\Models\User implements MustVerifyEmail
         'provider_token'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
     /**
-     * The attributes that should be cast.
+     * Получить все пасты, связанные с пользователем.
      *
-     * @var array<string, string>
+     * @return HasMany
      */
-
-    public function pastes()
+    public function pastes(): HasMany
     {
         return $this->hasMany(Paste::class);
     }
 
-    public function comments()
+    /**
+     * Получить все комментарии, связанные с пользователем.
+     *
+     * @return HasMany
+     */
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
-    public function reports()
+    /**
+     * Получить все отчеты, связанные с пользователем.
+     *
+     * @return HasMany
+     */
+    public function reports(): HasMany
     {
         return $this->hasMany(Report::class);
     }
 
-    public static function generateUserName($username)
+    /**
+     * Сгенерировать имя пользователя.
+     *
+     * @param string|null $username
+     * @return string
+     */
+    public static function generateUserName(string $username = null): string
     {
-        if ($username === null){
-            $username = Str :: lower(Str::random(8));
+        if ($username === null) {
+            $username = Str::lower(Str::random(8));
         }
-        if (User::where('name', $username)->exists()){
-            $newUsername = $username.Str::lower(Str::random(3));
-            $username = self::generateUserName(($newUsername));
+
+        if (self::where('name', $username)->exists()) {
+            $newUsername = $username . Str::lower(Str::random(3));
+            $username = self::generateUserName($newUsername);
         }
+
         return $username;
     }
 }

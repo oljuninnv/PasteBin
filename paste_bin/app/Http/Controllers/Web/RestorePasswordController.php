@@ -11,10 +11,11 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use App\DTO\PasswordResetDTO;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Visibility;
 use App\Enums\VisibilityEnum;
 use App\Models\Paste;
+use Illuminate\Support\Facades\Auth;
 
 class RestorePasswordController extends Controller
 {

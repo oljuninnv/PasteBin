@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Paste extends Model
 {
@@ -21,37 +23,72 @@ class Paste extends Model
         'short_link',
     ];
 
-    public function user()
+    /**
+     * Получить пользователя, который создал пасту.
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function language()
+    /**
+     * Получить язык пасты.
+     *
+     * @return BelongsTo
+     */
+    public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
     }
 
-    public function category()
+    /**
+     * Получить категорию пасты.
+     *
+     * @return BelongsTo
+     */
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function comments()
+    /**
+     * Получить все комментарии, связанные с пастой.
+     *
+     * @return HasMany
+     */
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
-    public function reports()
+    /**
+     * Получить все отчеты, связанные с пастой.
+     *
+     * @return HasMany
+     */
+    public function reports(): HasMany
     {
         return $this->hasMany(Report::class);
     }
 
-    public function visibility()
+    /**
+     * Получить видимость пасты.
+     *
+     * @return BelongsTo
+     */
+    public function visibility(): BelongsTo
     {
         return $this->belongsTo(Visibility::class);
     }
 
-    public function expiration_time()
+    /**
+     * Получить время истечения пасты.
+     *
+     * @return BelongsTo
+     */
+    public function expiration_time(): BelongsTo
     {
         return $this->belongsTo(ExpirationTime::class);
     }

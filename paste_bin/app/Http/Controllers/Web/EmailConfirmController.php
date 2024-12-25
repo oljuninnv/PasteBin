@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\DTO\EmailConfirmDTO;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 
 class EmailConfirmController extends Controller
 {

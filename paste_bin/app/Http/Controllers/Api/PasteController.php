@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StorePasteRequest;
 use App\Models\Paste;
+use Exception;
 use App\Models\ExpirationTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
