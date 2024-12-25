@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 class PasteController extends Controller
 {
 
-    public function index($short_link) // Заполнение формы по созданию пасты
+    public function index() // Заполнение формы по созданию пасты
     {
         $user = Auth::user();
         $visibilitys = Visibility::all();

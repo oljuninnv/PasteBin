@@ -12,6 +12,8 @@ use App\Models\Comment;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use App\Http\Resources\PasteResource;
+use App\Enums\VisibilityEnum;
+use App\Models\Visibility;
 
 class PasteController extends Controller
 {
@@ -214,26 +216,17 @@ class PasteController extends Controller
 
     public function show($short_link)
     {
+        $user = Auth::user();
         // Находим пасту по короткой ссылке
         $paste = Paste::where('short_link', $short_link)->firstOrFail();
 
-        // Формируем ответ с необходимыми полями
-        $pasteData = [
-            'id' => $paste->id,
-            'title' => $paste->title,
-            'content' => $paste->content,
-            'expires_at' => $paste->expires_at,
-            'language_id' => $paste->language->name,
-            'category_id' => $paste->category->name,
-            'short_link' => $paste->short_link,
-            'created_at' => $paste->created_at,
-            'updated_at' => $paste->updated_at,
-            'visibility_id' => $paste->visibility->name,
-            'expiration_time_id' => $paste->expiration_time->name,
-            'tags' => $paste->tags,
-        ];
+        if ($paste->visibility?->name != VisibilityEnum::UNLISTED || $paste->user_id == $user?->id){
+            return (new PasteResource($paste))->additional(['success' => true]);
+        }
 
-        return response()->json(['paste' => $pasteData], 200);
+        else{
+            return response()->json(['messages'=>'You do not have rights for this paste.']);
+        }
     }
 
     public function index(Request $request)
@@ -241,10 +234,14 @@ class PasteController extends Controller
         // Получаем параметр поиска из запроса
         $search = $request->input('search');
 
-        // Получаем все пасты с пагинацией, применяя поиск, если он указан
+        $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
+
         $pastes = Paste::when($search, function ($query) use ($search) {
             return $query->where('title', 'like', "%{$search}%");
-        })->paginate($request->get('per_page')); // Укажите количество элементов на странице
+        }
+        )
+        ->where('visibility_id',$publicVisibilityId)
+        ->paginate($request->get('per_page'));
 
         // Возвращаем коллекцию паст с пагинацией
         return PasteResource::collection($pastes);
@@ -252,17 +249,29 @@ class PasteController extends Controller
 
     public function user_index(Request $request, $user_id)
     {
-        // Получаем параметр поиска из запроса
+        $user = Auth::user();
+
         $search = $request->input('search');
 
-        // Получаем пасты пользователя с пагинацией, применяя поиск, если он указан
-        $pastes = Paste::where('user_id', $user_id)
-            ->when($search, function ($query) use ($search) {
-                return $query->where('title', 'like', "%{$search}%")
-                            ->orWhere('content', 'like', "%{$search}%");
-            })->paginate($request->get('per_page')); // Укажите количество элементов на странице
+        if (!$user || $user->id != $user_id){
+            $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
 
-        // Возвращаем коллекцию паст с пагинацией
+            $pastes = Paste::when($search, function ($query) use ($search) {
+                return $query->where('title', 'like', "%{$search}%");
+            }
+            )
+            ->where('visibility_id',$publicVisibilityId)
+            ->paginate($request->get('per_page'));
+        }
+        else{
+            $pastes = Paste::when($search, function ($query) use ($search) {
+                return $query->where('title', 'like', "%{$search}%");
+            }
+            )->paginate($request->get('per_page'));
+        }
+
+         
+        
         return PasteResource::collection($pastes);
     }
 }
