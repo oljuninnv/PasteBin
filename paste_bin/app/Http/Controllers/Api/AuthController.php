@@ -19,12 +19,17 @@ class AuthController extends Controller
 
         if (Auth::attempt(['name' => $values['name'], 'password' => $values['password']])) {
             $user = Auth::user();
-            $success['token'] = $user->createToken('User Token')->accessToken;
+            if (!$user->banned){
+                $success['token'] = $user->createToken('User Token')->accessToken;
 
-            $success['data'] = [
-                'user' => $user,
-            ];
-
+                $success['data'] = [
+                    'user' => $user,
+                ]; 
+            }
+            else{
+                return response()->json(['message' => 'Ваш профиль заблокирован.']);
+            }
+        
             return $this->successResponse($success);
         }
 

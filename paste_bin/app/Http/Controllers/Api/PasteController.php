@@ -157,7 +157,10 @@ class PasteController extends Controller
     public function get_comments($short_link)
     {
         // Находим пасту по короткой ссылке
-        $paste = Paste::where('short_link', $short_link)->firstOrFail();
+        $paste = Paste::where('short_link', $short_link)
+        ->where('expires_at','>',now())
+        ->orWhereNull('expires_at')        
+        ->firstOrFail();
 
         // Получаем комментарии, связанные с пастой
         $comments = $paste->comments()->with('user')->get();
@@ -218,7 +221,10 @@ class PasteController extends Controller
     {
         $user = Auth::user();
         // Находим пасту по короткой ссылке
-        $paste = Paste::where('short_link', $short_link)->firstOrFail();
+        $paste = Paste::where('short_link', $short_link)
+        ->where('expires_at','>',now())
+        ->orWhereNull('expires_at')
+        ->firstOrFail();
 
         if ($paste->visibility?->name != VisibilityEnum::UNLISTED || $paste->user_id == $user?->id){
             return (new PasteResource($paste))->additional(['success' => true]);
@@ -241,6 +247,8 @@ class PasteController extends Controller
         }
         )
         ->where('visibility_id',$publicVisibilityId)
+        ->where('expires_at','>',now())
+        ->orWhereNull('expires_at')
         ->paginate($request->get('per_page'));
 
         // Возвращаем коллекцию паст с пагинацией
@@ -261,6 +269,8 @@ class PasteController extends Controller
             }
             )
             ->where('visibility_id',$publicVisibilityId)
+            ->where('expires_at','>',now())
+                ->orWhereNull('expires_at')
             ->paginate($request->get('per_page'));
         }
         else{
