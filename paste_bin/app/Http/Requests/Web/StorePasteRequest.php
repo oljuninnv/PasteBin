@@ -8,12 +8,13 @@ use Illuminate\Validation\ValidationException;
 
 class StorePasteRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
-    public function rules()
+
+    public function rules(): array
     {
         return [
             'title' => 'required|string|max:255',
@@ -26,7 +27,7 @@ class StorePasteRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'title.required' => 'Название пасты обязательно для заполнения.',
@@ -34,8 +35,8 @@ class StorePasteRequest extends FormRequest
             'title.max' => 'Название пасты не должно превышать 255 символов.',
             'content.required' => 'Содержимое пасты обязательно для заполнения.',
             'content.string' => 'Содержимое пасты должно быть строкой.',
-            'visibility.required' => 'Выберите видимость пасты.',
-            'visibility.exists' => 'Выбранный уровень доступа не существует',
+            'visibility_id.required' => 'Выберите видимость пасты.',
+            'visibility_id.exists' => 'Выбранный уровень доступа не существует',
             'expiration_time.required' => 'Выберите время существования пасты.',
             'expiration_time.exists' => 'Выбранное время существования пасты не существует',
             'language_id.exists' => 'Выбранный язык не существует.',

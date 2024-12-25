@@ -6,16 +6,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 
 class ProfileController extends Controller
 {
-    public function edit(Request $request, $user_id)
+    public function edit(Request $request, int $user_id): JsonResponse
     {
         // Проверка, авторизован ли пользователь
         $authenticatedUser = Auth::user();
 
         // Проверка, совпадает ли user_id с идентификатором авторизованного пользователя
-        if ($authenticatedUser->id !== (int) $user_id) {
+        if ($authenticatedUser->id !== $user_id) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -33,35 +34,35 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Profile updated successfully', 'user' => $user], 200);
     }
 
-    public function show(Request $request, $user_id)
-{
-    //Проверка, авторизован ли пользователь
-    $authenticatedUser = Auth::user();
+    public function show(Request $request, int $user_id): JsonResponse
+    {
+        // Проверка, авторизован ли пользователь
+        $authenticatedUser = Auth::user();
 
-    // Проверка, совпадает ли user_id с идентификатором авторизованного пользователя
-    if ($authenticatedUser->id !== (int) $user_id) {
-        return response()->json(['error' => 'Unauthorized'], 403);
+        // Проверка, совпадает ли user_id с идентификатором авторизованного пользователя
+        if ($authenticatedUser->id !== $user_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Находим пользователя по user_id
+        $user = User::findOrFail($user_id);
+
+        // Формируем ответ с необходимыми полями
+        $userData = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role->name,
+            'avatar' => $user->avatar,
+            'location' => $user->location,
+            'website' => $user->website,
+            'email_verified_at' => $user->email_verified_at,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+            'provider' => $user->provider,
+            'banned' => $user->banned,
+        ];
+
+        return response()->json(['message' => 'Profile retrieved successfully', 'user' => $userData], 200);
     }
-
-    // Находим пользователя по user_id
-    $user = User::findOrFail($user_id);
-
-    // Формируем ответ с необходимыми полями
-    $userData = [
-        'id' => $user->id,
-        'name' => $user->name,
-        'email' => $user->email,
-        'role' => $user->role->name,
-        'avatar' => $user->avatar,
-        'location' => $user->location,
-        'website' => $user->website,
-        'email_verified_at' => $user->email_verified_at,
-        'created_at' => $user->created_at,
-        'updated_at' => $user->updated_at,
-        'provider' => $user->provider,
-        'banned' => $user->banned,
-    ];
-
-    return response()->json(['message' => 'Profile retrieved successfully', 'user' => $userData], 200);
-}
 }

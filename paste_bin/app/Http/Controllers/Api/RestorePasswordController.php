@@ -10,20 +10,21 @@ use App\Models\PasswordReset;
 use App\DTO\PasswordResetDTO;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
+use Illuminate\Http\JsonResponse;
 
 class RestorePasswordController extends Controller
 {
-    public function forgetPassword(Request $request)
+    public function forgetPassword(Request $request): JsonResponse
     {
         try {
-            $user = User::where('email', $request->email)->first();
+            $user = User::where('email', $request->input('email'))->first();
 
             if ($user) {
                 $token = Str::random(40);
-                $url = url('reset_password/confirm'). '?' . http_build_query(['token' => $token]);
+                $url = url('reset_password/confirm') . '?' . http_build_query(['token' => $token]);
 
                 $data = new PasswordResetDTO(
-                    $request->email,
+                    $request->input('email'),
                     $token,
                     $url,
                     'Смена пароля',

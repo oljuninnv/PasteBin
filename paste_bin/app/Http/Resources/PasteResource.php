@@ -15,19 +15,19 @@ class PasteResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'user' => $this->user?->name,
-            'title' => $this->title,
-            'content' => $this->content,
-            'expires_at' => $this->expires_at,
-            'language' => $this->language?->name,
-            'category' => $this->category?->name,
-            'short_link' => $this->short_link,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'visibility' => $this->visibility?->name,
-            'expiration_time' => $this->expiration_time?->name,
-            'tags' => $this->tags,
+            'id' => $this->resource->id,
+            'user' => $this->resource->user?->name,
+            'title' => $this->resource->title,
+            'content' => $this->resource->content,
+            'expires_at' => $this->resource->expires_at,
+            'language' => $this->resource->language?->name,
+            'category' => $this->resource->category?->name,
+            'short_link' => $this->resource->short_link,
+            'created_at' => $this->resource->created_at,
+            'updated_at' => $this->resource->updated_at,
+            'visibility' => $this->resource->visibility?->name,
+            'expiration_time' => $this->resource->expiration_time?->name,
+            'tags' => $this->resource->tags,
         ];
     }
 }

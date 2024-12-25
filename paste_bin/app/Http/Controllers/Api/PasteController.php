@@ -5,35 +5,33 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StorePasteRequest;
 use App\Models\Paste;
-use Exception;
 use App\Models\ExpirationTime;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use App\Models\Comment;
 use App\Models\Report;
+use App\Models\Visibility;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Resources\PasteResource;
 use App\Enums\VisibilityEnum;
-use App\Models\Visibility;
 
 class PasteController extends Controller
 {
-    public function store(StorePasteRequest $request) // Отправка данных с формы пасты
+    public function store(StorePasteRequest $request): JsonResponse
     {
         try {
-            // Создаем новую пасту
             $paste = new Paste();
             $paste->content = $request->input('content');
             $paste->category_id = $request->input('category_id');
 
-            // Обработка access_time
             $accessTime = $request->input('expiration_time');
-            $duration = ExpirationTime::where('id', $accessTime)->value('value_in_minutes'); // the_duration хранится в минутах
+            $duration = ExpirationTime::where('id', $accessTime)->value('value_in_minutes');
             if ($duration > 0) {
                 $paste->expiration_time_id = $accessTime;
-                $paste->expires_at = now()->addMinutes($duration); // Добавляем минуты к текущему времени
+                $paste->expires_at = now()->addMinutes($duration);
             } else {
-                $paste->expires_at = null; // Если не нашли duration, оставляем пустым
+                $paste->expires_at = null;
             }
 
             $paste->tags = $request->input('tags');
@@ -45,55 +43,45 @@ class PasteController extends Controller
                 $paste->user_id = Auth::id();
             }
 
-
             do {
                 $short_link = Str::random(15);
             } while (Paste::where('short_link', $short_link)->exists());
 
             $paste->short_link = $short_link;
-
-            // Сохранение пасты
             $paste->save();
 
-            // Перенаправление после успешного сохранения
-            return $this->successResponse('Паста успешно создана');
-        } catch (Exception) {
-            return $this->failureResponse('Ошибка при создании пасты');
+            return response()->json(['message' => 'Паста успешно создана'], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Ошибка при создании пасты', 'details' => $e->getMessage()], 500);
         }
     }
 
-    public function destroy($short_link)
+    public function destroy(string $short_link): JsonResponse
     {
         $user = Auth::user();
         $paste = Paste::where('short_link', $short_link)->firstOrFail();
 
-        // Проверка, является ли пользователь владельцем пасты
         if ($paste->user_id !== $user->id) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        // Удаление пасты
         $paste->delete();
-
         return response()->json(['message' => 'Paste deleted successfully'], 200);
     }
 
-    public function comment(Request $request, $short_link)
+    public function comment(Request $request, string $short_link): JsonResponse
     {
         $user = Auth::user();
         $paste = Paste::where('short_link', $short_link)->firstOrFail();
 
-        // Проверка, является ли пользователь владельцем пасты
         if ($paste->user_id === $user->id) {
             return response()->json(['error' => 'You cannot comment on your own paste'], 403);
         }
 
-        // Валидация входящих данных
         $validatedData = $request->validate([
             'comment' => 'required|string|max:500',
         ]);
 
-        // Создание комментария
         $comment = new Comment();
         $comment->paste_id = $paste->id;
         $comment->user_id = $user->id;
@@ -103,22 +91,19 @@ class PasteController extends Controller
         return response()->json(['message' => 'Comment added successfully', 'comment' => $comment], 201);
     }
 
-    public function report(Request $request, $short_link)
+    public function report(Request $request, string $short_link): JsonResponse
     {
         $user = Auth::user();
         $paste = Paste::where('short_link', $short_link)->firstOrFail();
 
-        // Проверка, является ли пользователь владельцем пасты
         if ($paste->user_id === $user->id) {
             return response()->json(['error' => 'You cannot report your own paste'], 403);
         }
 
-        // Валидация входящих данных
         $validatedData = $request->validate([
             'reason' => 'required|string|max:255',
         ]);
 
-        // Создание отчета
         $report = new Report();
         $report->paste_id = $paste->id;
         $report->user_id = $user->id;
@@ -159,9 +144,9 @@ class PasteController extends Controller
     {
         // Находим пасту по короткой ссылке
         $paste = Paste::where('short_link', $short_link)
-        ->where('expires_at','>',now())
-        ->orWhereNull('expires_at')        
-        ->firstOrFail();
+            ->where('expires_at', '>', now())
+            ->orWhereNull('expires_at')
+            ->firstOrFail();
 
         // Получаем комментарии, связанные с пастой
         $comments = $paste->comments()->with('user')->get();
@@ -174,9 +159,9 @@ class PasteController extends Controller
                 'created_at' => $comment->created_at,
                 'updated_at' => $comment->updated_at,
                 'user' => [
-                        'id' => $comment->user->id,
-                        'name' => $comment->user->name,
-                    ],
+                    'id' => $comment->user->id,
+                    'name' => $comment->user->name,
+                ],
                 'paste' => [
                     'id' => $comment->paste->id,
                     'title' => $comment->paste->title,
@@ -204,9 +189,9 @@ class PasteController extends Controller
                 'created_at' => $report->created_at,
                 'updated_at' => $report->updated_at,
                 'user' => [
-                        'id' => $report->user->id,
-                        'name' => $report->user->name,
-                    ],
+                    'id' => $report->user->id,
+                    'name' => $report->user->name,
+                ],
                 'paste' => [
                     'id' => $report->paste->id,
                     'title' => $report->paste->title,
@@ -223,16 +208,14 @@ class PasteController extends Controller
         $user = Auth::user();
         // Находим пасту по короткой ссылке
         $paste = Paste::where('short_link', $short_link)
-        ->where('expires_at','>',now())
-        ->orWhereNull('expires_at')
-        ->firstOrFail();
+            ->where('expires_at', '>', now())
+            ->orWhereNull('expires_at')
+            ->firstOrFail();
 
-        if ($paste->visibility?->name != VisibilityEnum::UNLISTED || $paste->user_id == $user?->id){
+        if ($paste->visibility?->name != VisibilityEnum::UNLISTED || $paste->user_id == $user?->id) {
             return (new PasteResource($paste))->additional(['success' => true]);
-        }
-
-        else{
-            return response()->json(['messages'=>'You do not have rights for this paste.']);
+        } else {
+            return response()->json(['messages' => 'You do not have rights for this paste.']);
         }
     }
 
@@ -243,14 +226,16 @@ class PasteController extends Controller
 
         $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
 
-        $pastes = Paste::when($search, function ($query) use ($search) {
-            return $query->where('title', 'like', "%{$search}%");
-        }
+        $pastes = Paste::when(
+            $search,
+            function ($query) use ($search) {
+                return $query->where('title', 'like', "%{$search}%");
+            }
         )
-        ->where('visibility_id',$publicVisibilityId)
-        ->where('expires_at','>',now())
-        ->orWhereNull('expires_at')
-        ->paginate($request->get('per_page'));
+            ->where('visibility_id', $publicVisibilityId)
+            ->where('expires_at', '>', now())
+            ->orWhereNull('expires_at')
+            ->paginate($request->get('per_page'));
 
         // Возвращаем коллекцию паст с пагинацией
         return PasteResource::collection($pastes);
@@ -262,27 +247,30 @@ class PasteController extends Controller
 
         $search = $request->input('search');
 
-        if (!$user || $user->id != $user_id){
+        if (!$user || $user->id != $user_id) {
             $publicVisibilityId = Visibility::where('name', VisibilityEnum::PUBLIC )->value('id');
 
-            $pastes = Paste::when($search, function ($query) use ($search) {
-                return $query->where('title', 'like', "%{$search}%");
-            }
+            $pastes = Paste::when(
+                $search,
+                function ($query) use ($search) {
+                    return $query->where('title', 'like', "%{$search}%");
+                }
             )
-            ->where('visibility_id',$publicVisibilityId)
-            ->where('expires_at','>',now())
+                ->where('visibility_id', $publicVisibilityId)
+                ->where('expires_at', '>', now())
                 ->orWhereNull('expires_at')
-            ->paginate($request->get('per_page'));
-        }
-        else{
-            $pastes = Paste::when($search, function ($query) use ($search) {
-                return $query->where('title', 'like', "%{$search}%");
-            }
+                ->paginate($request->get('per_page'));
+        } else {
+            $pastes = Paste::when(
+                $search,
+                function ($query) use ($search) {
+                    return $query->where('title', 'like', "%{$search}%");
+                }
             )->paginate($request->get('per_page'));
         }
 
-         
-        
+
+
         return PasteResource::collection($pastes);
     }
 }

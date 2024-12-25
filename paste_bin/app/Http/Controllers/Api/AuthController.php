@@ -13,21 +13,20 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {        
         $values = $request->all();
 
         if (Auth::attempt(['name' => $values['name'], 'password' => $values['password']])) {
             $user = Auth::user();
-            if (!$user->banned){
+            if (!$user->banned) {
                 $success['token'] = $user->createToken('User Token')->accessToken;
 
                 $success['data'] = [
                     'user' => $user,
                 ]; 
-            }
-            else{
-                return response()->json(['message' => 'Ваш профиль заблокирован.']);
+            } else {
+                return response()->json(['message' => 'Ваш профиль заблокирован.'], 403);
             }
         
             return $this->successResponse($success);
@@ -38,29 +37,26 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        // Валидация данных запроса
         $values = $request->all();
-            // Создание нового пользователя
-            $user = new User;
-            $user->name = $values['name'];
-            $user->email = $values['email'];
-            $user->password = Hash::make($values['password']);
-            $user->save();
+        $user = new User;
+        $user->name = $values['name'];
+        $user->email = $values['email'];
+        $user->password = Hash::make($values['password']);
+        $user->save();
 
-            // Генерация токена доступа
-            $token = $user->createToken('Access Token')->accessToken;
-            $data = [
-                'user' => $user,
-                'access_token' => $token,
-            ];
+        $token = $user->createToken('Access Token')->accessToken;
+        $data = [
+            'user' => $user,
+            'access_token' => $token,
+        ];
 
-            return response()->json($data, 200);
+        return response()->json($data, 200);
     } 
 
-    public function logout(Request $request){
+    public function logout(Request $request): JsonResponse
+    {
         $user = Auth::user();
         $user->tokens()->delete();
         return response()->json(['message' => 'User logged out successfully.'], 200);
     }
-
 }
