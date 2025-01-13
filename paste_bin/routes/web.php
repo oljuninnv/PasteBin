@@ -12,6 +12,7 @@ use App\Http\Controllers\Web\ArchivePastesController;
 use App\Http\Controllers\Web\SendCommentController;
 use App\Http\Controllers\Web\ReportController;
 use App\Http\Controllers\Web\userPageController;
+use App\Http\Controllers\Voyager\BanController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -86,8 +87,7 @@ Route::get('/api', function () {
 
 Route::post('send_comment', [SendCommentController::class, 'send_comment'])->name('send_comment');
 
-
 Route::group(['prefix' => 'admin'], function () {
+    Route::get('users/ban', [BanController::class, 'ban'])->name('users.ban');
     Voyager::routes();
 });
-
