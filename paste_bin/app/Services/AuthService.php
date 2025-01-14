@@ -7,20 +7,27 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
+/**
+ * Class AuthService
+ */
 class AuthService
 {
-    protected $userRepository;
+    protected UserRepository $userRepository;
 
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
     }
 
-    public function login(array $credentials)
+    /**
+     * @param array<string, mixed> $credentials
+     * @return array
+     */
+    public function login(array $credentials): array
     {
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            if (!$user->banned) {
+            if (isset($user->banned) && !$user->banned) {
                 return [
                     'token' => $user->createToken('User Token')->accessToken,
                     'user' => $user,
@@ -33,6 +40,10 @@ class AuthService
         throw new \Exception('Ошибка в заполнении данных');
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return User
+     */
     public function register(array $data): User
     {
         $data['password'] = Hash::make($data['password']);
