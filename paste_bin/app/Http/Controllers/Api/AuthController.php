@@ -2,61 +2,50 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Api\LoginRequest;
 use App\Http\Requests\Api\RegisterRequest;
+use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
+    protected $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     public function login(LoginRequest $request): JsonResponse
-    {        
-        $values = $request->all();
-
-        if (Auth::attempt(['name' => $values['name'], 'password' => $values['password']])) {
-            $user = Auth::user();
-            if (!$user->banned) {
-                $success['token'] = $user->createToken('User Token')->accessToken;
-
-                $success['data'] = [
-                    'user' => $user,
-                ]; 
-            } else {
-                return response()->json(['message' => 'Ваш профиль заблокирован.'], 403);
-            }
-        
-            return $this->successResponse($success);
+    {
+        try {
+            $success = $this->authService->login($request->only('name', 'password'));
+            return response()->json($success, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 409);
         }
-
-        return response()->json(['message' => 'Ошибка в заполнении данных'], 409);
     }
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        $values = $request->all();
-        $user = new User;
-        $user->name = $values['name'];
-        $user->email = $values['email'];
-        $user->password = Hash::make($values['password']);
-        $user->save();
-
+        $user = $this->authService->register($request->all());
         $token = $user->createToken('Access Token')->accessToken;
-        $data = [
+
+        return response()->json([
             'user' => $user,
             'access_token' => $token,
-        ];
-
-        return response()->json($data, 200);
-    } 
+        ], 200);
+    }
 
     public function logout(Request $request): JsonResponse
     {
-        $user = Auth::user();
-        $user->tokens()->delete();
-        return response()->json(['message' => 'User logged out successfully.'], 200);
+        try {
+            $this->authService->logout();
+            return response()->json(['message' => 'Выход из профиля прошло успешно.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Выход произвести не удалось т.к. пользователь не авторизован.'], 403);
+        }
     }
 }

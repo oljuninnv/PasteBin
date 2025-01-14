@@ -25,14 +25,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::middleware('auth:api')->get('/logout',[AuthController::class,'logout']);
 
-Route::middleware('guest')->group(function () {
+Route::middleware('guest')->group(function () {   
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
 
-    //Востановление пароля
     Route::post('/restore', [RestorePasswordController::class, 'forgetPassword']);
-    // Route::post('/restore/confirm', [RestorePasswordController::class, 'resetPassword']);
-
 });
 
 Route::post('confirm_email', [EmailConfirmController::class, 'send_mail'])
@@ -62,4 +59,3 @@ Route::get('reports_paste/{short_link}', [PasteController::class, 'get_reports']
 
 Route::get('/pastes', [PasteController::class, 'index']); 
 Route::get('/user_pastes/{user_id}', [PasteController::class, 'user_index']);
-//
